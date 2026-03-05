@@ -4,8 +4,8 @@ export async function onRequest(context) {
   const PASS = env.SITE_PASSWORD || '';
   const TOKEN = 'auth=' + btoa(PASS);
 
-  // Allow login page
-  if (url.pathname === '/login.html') return next();
+  // Allow login page (Cloudflare Pages redirects /login.html → /login via Pretty URLs)
+  if (url.pathname === '/login.html' || url.pathname === '/login') return next();
 
   // Handle POST /login
   if (request.method === 'POST' && url.pathname === '/login') {
