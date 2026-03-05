@@ -65,7 +65,7 @@
   .card-head .chevron { margin-left:auto; font-size:16px; transition:transform .2s; color: var(--muted); }
   .card.collapsed .card-body { display:none; }
   .card.collapsed .chevron { transform:rotate(-90deg); }
-  .qty-edit { width:56px; padding:4px 6px; border:1px solid var(--border); border-radius:8px; font-size:13px; text-align:center; }
+  .qty-edit { width:44px; padding:2px 4px; border:1px solid var(--border); border-radius:6px; font-size:12px; text-align:center; }
   .cart-item-del { font-size:11px; color:#dc2626; cursor:pointer; background:none; border:none; padding:0; margin-top:4px; }
   .ribbon-opts { display:flex; gap:8px; margin-top:8px; }
   .ribbon-opts label { display:flex; align-items:center; gap:4px; font-size:13px; cursor:pointer; }
@@ -204,7 +204,7 @@
 
         <!-- Auswahl 3 -->
         <div class="card">
-          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 3 – Drucker &amp; Codiereinheit</div><span class="chevron">▾</span></div>
+          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 3 – Drucker</div><span class="chevron">▾</span></div>
           <div class="card-body">
             <div id="a3Printers" class="row row-3" style="margin-bottom:12px;"></div>
 
@@ -215,12 +215,6 @@
                 <label><input type="radio" name="ribbon" id="ribbonColor" value="color"/> Farbband YMCKO (MAT4001001)</label>
                 <label><input type="radio" name="ribbon" id="ribbonBlack" value="black"/> Schwarzband (MAT4001002)</label>
               </div>
-            </div>
-
-            <!-- Codiereinheit (wenn Codierung gewählt) -->
-            <div id="a3CodeReaderWrapper" style="display:none; margin-top:10px; margin-left:12px; padding:10px 12px; background:#f8f9fa; border-left:3px solid #c8d8a0; border-radius:0 8px 8px 0;">
-              <div class="label" style="font-size:12px; color:#666; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Codiereinheit</div>
-              <div id="a3CodeReaderOptions" style="margin-top:0;"></div>
             </div>
 
             <div style="margin-top:12px;">
@@ -253,6 +247,15 @@
             </div>
 
             <div id="a3NeedContact" class="hint" style="display:none; margin-top:8px;">Bitte <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a> kontaktieren, um zu prüfen, ob ein vorhandener Drucker genutzt und ein Codiermodul eingebaut werden kann.</div>
+          </div>
+        </div>
+
+        <!-- Codiereinheit -->
+        <div id="a3CodeReaderCard" class="card" style="display:none;">
+          <div class="card-head"><div class="dot"></div><div class="title">Codiereinheit</div><span class="chevron">▾</span></div>
+          <div class="card-body">
+            <div id="a3CodeReaderOptions" class="row row-2"></div>
+            <div id="a3NeedContactCoding" class="hint" style="display:none; margin-top:8px;">Bei <b>Kein Drucker</b> und Codierung: <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a> kontaktieren.</div>
           </div>
         </div>
 
@@ -377,9 +380,9 @@
     // a3
     a3Printer: "", a3CodeReader: "", a3Ribbon: "color",
     // a2 extra
-    a2Lighting: false,
+    a2Lighting: false, qtyLed: null,
     // cart qty overrides (null = auto)
-    qtyPrnRet: null, qtyPrnDir: null, qtyStativ: null,
+    qtyPrnRet: null, qtyPrnDir: null, qtyStativ: null, qtyStativDel: false,
     qtyRibbonRetC: null, qtyRetransfPlat: null, qtyCleanRet: null,
     qtyRibbonDirC: null, qtyRibbonDirB: null,
     qtyCleanRetDel: false,
@@ -518,8 +521,8 @@
     a2Lighting: document.getElementById("a2Lighting"),
     // a3
     a3Printers: document.getElementById("a3Printers"),
+    a3CodeReaderCard: document.getElementById("a3CodeReaderCard"),
     a3CodeReaderOptions: document.getElementById("a3CodeReaderOptions"),
-    a3CodeReaderWrapper: document.getElementById("a3CodeReaderWrapper"),
     a3RibbonWrapper: document.getElementById("a3RibbonWrapper"),
     ribbonColor: document.getElementById("ribbonColor"),
     ribbonBlack: document.getElementById("ribbonBlack"),
@@ -601,8 +604,10 @@
         const v = Math.max(1, parseInt(e.target.value||'1',10));
         state[item.stateKey] = v; e.target.value = v; update();
       });
-      right.appendChild(document.createTextNode(qtyLabel+": "));
-      right.appendChild(inp);
+      const qtyRow = document.createElement("div"); qtyRow.style.cssText="display:flex;align-items:center;gap:4px;justify-content:flex-end;white-space:nowrap;";
+      qtyRow.appendChild(document.createTextNode(qtyLabel+": "));
+      qtyRow.appendChild(inp);
+      right.appendChild(qtyRow);
       if (item.price != null) {
         const total = item.price * item.qty;
         const priceEl = document.createElement("div"); priceEl.className="muted"; priceEl.style.fontSize="12px"; priceEl.style.marginTop="2px";
@@ -772,10 +777,10 @@
     // A3 printers
     el.a3Printers.className = "row row-3" + (!state.a3Printer ? " danger-ring" : "");
     radioCards(el.a3Printers, "a3", A3, state.a3Printer, setA3);
-    // Codiereinheit: show whenever coding variant is selected
+    // Codiereinheit: eigene Karte wenn Codierung gewählt
     const needsCodeReader = /codierung/.test(state.a1Variant);
-    if (el.a3CodeReaderWrapper) el.a3CodeReaderWrapper.style.display = needsCodeReader ? "" : "none";
-    if (needsCodeReader) { el.a3CodeReaderOptions.className = "row row-2" + (!state.a3CodeReader ? " danger-ring" : ""); el.a3CodeReaderOptions.style.cssText = "--card-font-size:13px;"; radioCards(el.a3CodeReaderOptions, "codeReader", CODEREADER, state.a3CodeReader, setCodeReader); }
+    el.a3CodeReaderCard.style.display = needsCodeReader ? "" : "none";
+    if (needsCodeReader) { el.a3CodeReaderOptions.className = "row row-2" + (!state.a3CodeReader ? " danger-ring" : ""); radioCards(el.a3CodeReaderOptions, "codeReader", CODEREADER, state.a3CodeReader, setCodeReader); }
     // Farbband: show when Direktdrucker
     const showRibbon = state.a3Printer === "direkt";
     el.a3RibbonWrapper.style.display = showRibbon ? "" : "none";
@@ -838,7 +843,6 @@
         items.push(Object.assign({}, P.NETZTEIL,   { qty: aw }));
         items.push(Object.assign({}, P.USB_KABEL,  { qty: aw }));
       }
-      if (state.a2Camera === "none") items.push({ name: "Kamera nicht enthalten", qty: aw, note: "Bilddatei-Upload möglich; alternativ USB‑Webcam nutzbar." });
       // Stativ (editierbar, löschbar)
       if (state.a2Camera === "dslr" || state.a2Camera === "webcam") {
         if (!state.qtyStativDel) {
@@ -846,13 +850,16 @@
           items.push(Object.assign({}, P.STATIV, { qty: qStativ, editable: true, stateKey: "qtyStativ", deletable: true, deleteKey: "qtyStativDel" }));
         }
       }
-      if (state.a2Lighting) items.push(Object.assign({}, P.LED, { qty: aw }));
+      if (state.a2Lighting) {
+        const qLed = state.qtyLed !== null ? state.qtyLed : aw;
+        items.push(Object.assign({}, P.LED, { qty: qLed, editable: true, stateKey: "qtyLed" }));
+      }
     }
 
     // A3 – Retransferdrucker
     if (state.a3Printer === "retransfer") {
       const qRet = state.qtyPrnRet !== null ? state.qtyPrnRet : wp;
-      items.push(Object.assign({}, P.PRN_RET, { qty: qRet, editable: true, stateKey: "qtyPrnRet", warnIfLess: wp }));
+      items.push(Object.assign({}, P.PRN_RET, { qty: qRet, editable: true, stateKey: "qtyPrnRet", warnIfLess: state.a1Variant === "druck_codierung" ? wp : undefined }));
       items.push(Object.assign({}, P.BEND_REMEDY, { qty: qRet }));
       const qRibC = state.qtyRibbonRetC !== null ? state.qtyRibbonRetC : qRet * 2;
       items.push(Object.assign({}, P.RIBBON_RET_C, { qty: qRibC, editable: true, stateKey: "qtyRibbonRetC" }));
@@ -867,7 +874,7 @@
     // A3 – Direktdrucker
     if (state.a3Printer === "direkt") {
       const qDir = state.qtyPrnDir !== null ? state.qtyPrnDir : wp;
-      items.push(Object.assign({}, P.PRN_DIR, { qty: qDir, editable: true, stateKey: "qtyPrnDir", warnIfLess: wp }));
+      items.push(Object.assign({}, P.PRN_DIR, { qty: qDir, editable: true, stateKey: "qtyPrnDir", warnIfLess: state.a1Variant === "druck_codierung" ? wp : undefined }));
       items.push(Object.assign({}, P.CLEAN_DIR, { qty: qDir }));
       if (state.a3Ribbon === "color") {
         const qRibDC = state.qtyRibbonDirC !== null ? state.qtyRibbonDirC : qDir * 2;
@@ -1004,9 +1011,10 @@
   }
 
   // ---------- Init ----------
-  // Collapsible cards
-  document.querySelectorAll(".card-head").forEach(head => {
-    head.addEventListener("click", () => { head.closest(".card").classList.toggle("collapsed"); });
+  // Collapsible cards (event delegation für alle card-heads inkl. dynamisch eingeblendete)
+  document.getElementById("left").addEventListener("click", e => {
+    const head = e.target.closest(".card-head");
+    if (head) head.closest(".card").classList.toggle("collapsed");
   });
 
   // initial render blocks
