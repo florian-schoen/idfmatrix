@@ -61,6 +61,14 @@
   .banner img { display:block; max-height: calc(var(--banner-h)); height: 100%; width: auto; object-fit: contain; object-position: center center; }
   .checkout { border-top:1px solid var(--border); padding-top:12px; margin-top:12px; }
   .emph { color: var(--brand-primary); font-weight:600; }
+  .card-head { cursor:pointer; user-select:none; }
+  .card-head .chevron { margin-left:auto; font-size:16px; transition:transform .2s; color: var(--muted); }
+  .card.collapsed .card-body { display:none; }
+  .card.collapsed .chevron { transform:rotate(-90deg); }
+  .qty-edit { width:56px; padding:4px 6px; border:1px solid var(--border); border-radius:8px; font-size:13px; text-align:center; }
+  .cart-item-del { font-size:11px; color:#dc2626; cursor:pointer; background:none; border:none; padding:0; margin-top:4px; }
+  .ribbon-opts { display:flex; gap:8px; margin-top:8px; }
+  .ribbon-opts label { display:flex; align-items:center; gap:4px; font-size:13px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -78,7 +86,7 @@
       <div id="left" class="space-y">
         <!-- Kundendaten -->
         <div class="card">
-          <div class="card-head"><div class="dot"></div><div class="title">Kundendaten</div></div>
+          <div class="card-head"><div class="dot"></div><div class="title">Kundendaten</div><span class="chevron">▾</span></div>
           <div class="card-body">
             <div class="row row-2">
               <div class="row">
@@ -112,7 +120,7 @@
 
         <!-- Auswahl 1 -->
         <div class="card">
-          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 1 – Ausweiserstellung</div></div>
+          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 1 – Ausweiserstellung</div><span class="chevron">▾</span></div>
           <div class="card-body">
             <div id="a1Options" class="row row-3" style="margin-bottom: 12px;"></div>
                         <div class="row row-2" style="align-items:start;">
@@ -138,7 +146,7 @@
 
         <!-- Auswahl 2 -->
         <div class="card">
-          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 2 – Bilderfassung</div></div>
+          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 2 – Bilderfassung</div><span class="chevron">▾</span></div>
           <div class="card-body">
             <div id="a2Options" class="row row-2" style="margin-bottom: 12px;"></div>
             <div id="a2Extras" style="display:none; margin-top:8px;">
@@ -182,6 +190,12 @@
                 <input id="a2Work" type="number" min="1" value="1"/>
               </div>
               <div id="a2NoCamHint" class="hint" style="display:none; margin-top:6px;"><b>Hinweis:</b> Gängige Bilddateien können per Upload verwendet werden und/oder es kann eine <b>USB‑Webcam</b> eingesetzt werden.</div>
+              <div class="row" style="margin-top:8px;">
+                <label style="display:flex; align-items:center; gap:8px; font-weight:600;">
+                  <input id="a2Lighting" type="checkbox"/> Fotobeleuchtung hinzufügen
+                </label>
+                <div class="muted" style="font-size:12px; margin-top:2px;">LED-Beleuchtungskit für optimale Bilderfassung (CAN4005019)</div>
+              </div>
               <div id="a2MismatchLess" class="hint" style="display:none; margin-top:6px;">Hinweis: Die Anzahl der Arbeitsplätze für die <b>Bilderfassung</b> ist <b>geringer</b> als die Arbeitsplätze für die <b>Ausweiserstellung</b>. Bitte prüfen, ob das beabsichtigt ist.</div>
               <div id="a2Mismatch" class="hint" style="display:none; margin-top:6px;">Hinweis: Die Anzahl der Arbeitsplätze in <b>Auswahl 1</b> und <b>Bilderfassung</b> unterscheiden sich. Bitte prüfen.</div>
             </div>
@@ -190,10 +204,20 @@
 
         <!-- Auswahl 3 -->
         <div class="card">
-          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 3 – Drucker</div></div>
+          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 3 – Drucker &amp; Codiereinheit</div><span class="chevron">▾</span></div>
           <div class="card-body">
             <div id="a3Printers" class="row row-3" style="margin-bottom:12px;"></div>
 
+            <!-- Farbband-Auswahl (nur bei Direktdrucker) -->
+            <div id="a3RibbonWrapper" style="display:none; margin-top:10px; margin-left:12px; padding:10px 12px; background:#f8f9fa; border-left:3px solid #c8d8a0; border-radius:0 8px 8px 0;">
+              <div class="label" style="font-size:12px; color:#666; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Farbband-Typ</div>
+              <div class="ribbon-opts">
+                <label><input type="radio" name="ribbon" id="ribbonColor" value="color"/> Farbband YMCKO (MAT4001001)</label>
+                <label><input type="radio" name="ribbon" id="ribbonBlack" value="black"/> Schwarzband (MAT4001002)</label>
+              </div>
+            </div>
+
+            <!-- Codiereinheit (wenn Codierung gewählt) -->
             <div id="a3CodeReaderWrapper" style="display:none; margin-top:10px; margin-left:12px; padding:10px 12px; background:#f8f9fa; border-left:3px solid #c8d8a0; border-radius:0 8px 8px 0;">
               <div class="label" style="font-size:12px; color:#666; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Codiereinheit</div>
               <div id="a3CodeReaderOptions" style="margin-top:0;"></div>
@@ -234,7 +258,7 @@
 
         <!-- Auswahl 4 -->
         <div class="card">
-          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 4 – Optionale Module</div></div>
+          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 4 – Optionale Module</div><span class="chevron">▾</span></div>
           <div class="card-body">
             <label class="check-card" style="display:flex; gap:10px; align-items:flex-start;">
               <input id="optCustom" type="checkbox" />
@@ -351,7 +375,14 @@
     // a2
     a2Variant: "", a2Camera: "", a2KI: false, a2Work: 1,
     // a3
-    a3Printer: "", a3CodeReader: "",
+    a3Printer: "", a3CodeReader: "", a3Ribbon: "color",
+    // a2 extra
+    a2Lighting: false,
+    // cart qty overrides (null = auto)
+    qtyPrnRet: null, qtyPrnDir: null, qtyStativ: null,
+    qtyRibbonRetC: null, qtyRetransfPlat: null, qtyCleanRet: null,
+    qtyRibbonDirC: null, qtyRibbonDirB: null,
+    qtyCleanRetDel: false,
     // a4
     opt: {
       custom: false, customDesc: "",
@@ -364,64 +395,95 @@
 
   // ---------- ECAT-Nummern (Kunden-Artikelnummern) - hier anpassen ----------
   const ECAT = {
-    PRINT:     "ECA1001211",
-    PRO:       "ECA1001201",
-    T_LEGIC:   "ECA1001206",
-    T_CLASSIC: "ECA1001035",
-    T_DESFIRE: "ECA1001205",
-    IDIMAGE:   "ECA2001226",
-    KI:        "ECA2001227",
-    CAM_USB:   "ECA4005018",
-    CAM_DSLR:  "ECA4005013",
-    PRN_RET:   "ECA4001007",
-    PRN_DIR:   "ECA4001016",
-    ENC_RET:   "ECA4001004",
-    ENC_DIR:   "ECA4001014",
-    PM:        "ECA1005012",
-    TOM:       "ECA1000300",
+    PRINT:           "ECA1001211",
+    T_LEGIC:         "ECA1001206",
+    T_CLASSIC:       "ECA1001204",
+    T_DESFIRE:       "ECA1001205",
+    IDIMAGE:         "ECA2001226",
+    KI:              "ECA2001227",
+    CAM_USB:         "ECA4005018",
+    CAM_DSLR:        "ECA4005013",
+    STATIV:          "ECA4005015",
+    NETZTEIL:        "ECA4005014",
+    USB_KABEL:       "ECA1001011",
+    LED:             "ECA4005019",
+    PRN_RET:         "ECA4001007",
+    PRN_DIR:         "ECA4001000",
+    ENC_RET:         "ECA4001004",
+    ENC_DIR:         "ECA4001014",
+    BEND_REMEDY:     "ECA4001013",
+    RIBBON_RET_C:    "ECA4001010",
+    RETRANSF_PLAT:   "ECA4001011",
+    CLEAN_RET:       "ECA4001021",
+    RIBBON_DIR_C:    "ECA4001001",
+    RIBBON_DIR_B:    "ECA4001002",
+    CLEAN_DIR:       "ECA4001003",
+    PM:              "ECA1005012",
+    TOM:             "ECA1002895",
   };
 
   // ---------- Preise (EUR pro Einheit) - hier anpassen ----------
   const PRICES = {
-    PRINT:     50,
-    PRO:       50,
-    T_LEGIC:   50,
-    T_CLASSIC: 50,
-    T_DESFIRE: 50,
-    IDIMAGE:   50,
-    KI:        50,
-    CAM_USB:   50,
-    CAM_DSLR:  50,
-    PRN_RET:   50,
-    PRN_DIR:   50,
-    ENC_RET:   50,
-    ENC_DIR:   50,
-    PM:        50,
-    TOM:       50,
+    PRINT:         870.00,
+    T_LEGIC:      1484.55,
+    T_CLASSIC:     913.42,
+    T_DESFIRE:    2357.68,
+    IDIMAGE:       430.00,
+    KI:            215.00,
+    CAM_USB:       245.00,
+    CAM_DSLR:      749.00,
+    STATIV:        111.20,
+    NETZTEIL:       73.75,
+    USB_KABEL:      16.90,
+    LED:           309.00,
+    PRN_RET:      3116.61,
+    PRN_DIR:      1392.00,
+    ENC_RET:       698.40,
+    ENC_DIR:       698.40,
+    BEND_REMEDY:   236.00,
+    RIBBON_RET_C:  182.00,
+    RETRANSF_PLAT:  69.90,
+    CLEAN_RET:      58.20,
+    RIBBON_DIR_C:   66.23,
+    RIBBON_DIR_B:   33.00,
+    CLEAN_DIR:      26.54,
+    PM:           1340.00,
+    TOM:           215.82,
   };
 
   // ---------- Products ----------
   const P = {
     // A1
-    PRINT:     { sku: "IDF1001211", ecat: ECAT.PRINT,     price: PRICES.PRINT,     name: "IDfunction print" },
-    PRO:       { sku: "IDF1001201", ecat: ECAT.PRO,       price: PRICES.PRO,       name: "IDfunction Professional" },
-    T_LEGIC:   { sku: "IDF1001206", ecat: ECAT.T_LEGIC,   price: PRICES.T_LEGIC,   name: "IDfunction Encode LEGIC advant" },
-    T_CLASSIC: { sku: "IDF1001035", ecat: ECAT.T_CLASSIC, price: PRICES.T_CLASSIC, name: "IDfunction Encode MIFARE Classic" },
-    T_DESFIRE: { sku: "IDF1001205", ecat: ECAT.T_DESFIRE, price: PRICES.T_DESFIRE, name: "IDfunction Encode DESFire EV1" },
+    PRINT:        { sku: "IDF1001211", ecat: ECAT.PRINT,        price: PRICES.PRINT,        name: "IDfunction print" },
+    T_LEGIC:      { sku: "IDF1001206", ecat: ECAT.T_LEGIC,      price: PRICES.T_LEGIC,      name: "IDfunction Encode LEGIC® advant" },
+    T_CLASSIC:    { sku: "IDF1001204", ecat: ECAT.T_CLASSIC,    price: PRICES.T_CLASSIC,    name: "IDfunction Encode MIFARE® Classic" },
+    T_DESFIRE:    { sku: "IDF1001205", ecat: ECAT.T_DESFIRE,    price: PRICES.T_DESFIRE,    name: "IDfunction Encode DESFire EV1 (*EV2/EV3)" },
     // A2
-    IDIMAGE:   { sku: "IDF2001226", ecat: ECAT.IDIMAGE,   price: PRICES.IDIMAGE,   name: "IDimage Bilderfassungssoftware" },
-    KI:        { sku: "IDF2001227", ecat: ECAT.KI,        price: PRICES.KI,        name: "IDimage acquisition KI-Option" },
-    CAM_USB:   { sku: "CAN4005018", ecat: ECAT.CAM_USB,   price: PRICES.CAM_USB,   name: "Webcam, HD-Video 1080p, 60 FPS, HDR" },
-    CAM_DSLR:  { sku: "CAN4005013", ecat: ECAT.CAM_DSLR,  price: PRICES.CAM_DSLR,  name: "Canon Spiegelreflex-Kamera" },
-    // A3
-    PRN_RET:   { sku: "MAT4001007", ecat: ECAT.PRN_RET,   price: PRICES.PRN_RET,   name: "MATICA XID8600 Dual Side" },
-    PRN_DIR:   { sku: "MAT4001016", ecat: ECAT.PRN_DIR,   price: PRICES.PRN_DIR,   name: "Matica MC310 Dual Side" },
-    ENC_RET:   { sku: "MAT4001004", ecat: ECAT.ENC_RET,   price: PRICES.ENC_RET,   name: "MATICA XID8300/XID8600 Kodiereinheit" },
-    ENC_DIR:   { sku: "MAT4001014", ecat: ECAT.ENC_DIR,   price: PRICES.ENC_DIR,   name: "MATICA MC110/MC210/MC310 Kodiereinheit" },
+    IDIMAGE:      { sku: "IDF2001226", ecat: ECAT.IDIMAGE,      price: PRICES.IDIMAGE,      name: "IDimage Bilderfassungssoftware" },
+    KI:           { sku: "IDF2001227", ecat: ECAT.KI,           price: PRICES.KI,           name: "IDimage acquisition KI-Option" },
+    CAM_USB:      { sku: "CAN4005018", ecat: ECAT.CAM_USB,      price: PRICES.CAM_USB,      name: "Webcam, HD-Video 1080p, 60 FPS, HDR" },
+    CAM_DSLR:     { sku: "CAN4005013", ecat: ECAT.CAM_DSLR,     price: PRICES.CAM_DSLR,     name: "Canon Spiegelreflex-Kamera 2000D" },
+    STATIV:       { sku: "CAN4005015", ecat: ECAT.STATIV,       price: PRICES.STATIV,       name: "Tripod-Stativ für SLR & Webcam" },
+    NETZTEIL:     { sku: "CAN4005014", ecat: ECAT.NETZTEIL,     price: PRICES.NETZTEIL,     name: "Externes Netzteil Canon SLR Kameras" },
+    USB_KABEL:    { sku: "CAB1001011", ecat: ECAT.USB_KABEL,    price: PRICES.USB_KABEL,    name: "3m USB-Kabel zu Mini-USB" },
+    LED:          { sku: "CAN4005019", ecat: ECAT.LED,          price: PRICES.LED,          name: "LED Videobeleuchtung" },
+    // A3 - Retransfer
+    PRN_RET:      { sku: "MAT4001007", ecat: ECAT.PRN_RET,      price: PRICES.PRN_RET,      name: "MATICA XID8600 Dual Side" },
+    ENC_RET:      { sku: "MAT4001004", ecat: ECAT.ENC_RET,      price: PRICES.ENC_RET,      name: "MATICA XID8300/XID8600 Kodiereinheit" },
+    BEND_REMEDY:  { sku: "MAT4001013", ecat: ECAT.BEND_REMEDY,  price: PRICES.BEND_REMEDY,  name: "MATICA Edisec XID8300/8600 Bend Remedy" },
+    RIBBON_RET_C: { sku: "MAT4001010", ecat: ECAT.RIBBON_RET_C, price: PRICES.RIBBON_RET_C, name: "MATICA XID8300/XID8600 Farbband Platinum" },
+    RETRANSF_PLAT:{ sku: "MAT4001011", ecat: ECAT.RETRANSF_PLAT,price: PRICES.RETRANSF_PLAT,name: "MATICA XID8300/XID8600 Retransf Platinum" },
+    CLEAN_RET:    { sku: "MAT4001021", ecat: ECAT.CLEAN_RET,    price: PRICES.CLEAN_RET,    name: "MATICA Cleaning Kit for XID Printer" },
+    // A3 - Direktdruck
+    PRN_DIR:      { sku: "MAT4001000", ecat: ECAT.PRN_DIR,      price: PRICES.PRN_DIR,      name: "Matica MC310 Dual Side Direktdrucker" },
+    ENC_DIR:      { sku: "MAT4001014", ecat: ECAT.ENC_DIR,      price: PRICES.ENC_DIR,      name: "Kodiereinheit MATICA MC110/MC210/MC310" },
+    RIBBON_DIR_C: { sku: "MAT4001001", ecat: ECAT.RIBBON_DIR_C, price: PRICES.RIBBON_DIR_C, name: "Matica MC310 Farbband YMCKO (Platinum)" },
+    RIBBON_DIR_B: { sku: "MAT4001002", ecat: ECAT.RIBBON_DIR_B, price: PRICES.RIBBON_DIR_B, name: "Matica MC310 Farbband Schwarz-2000 Print" },
+    CLEAN_DIR:    { sku: "MAT4001003", ecat: ECAT.CLEAN_DIR,    price: PRICES.CLEAN_DIR,    name: "Cleaning kit for MC DTC series Direct Printer" },
     // Projektmanagement
-    PM:        { sku: "DLP1005012", ecat: ECAT.PM,        price: PRICES.PM,        name: "Projektmanagement" },
-    // Externer Tischleser
-    TOM:       { sku: "TOM1000300", ecat: ECAT.TOM,       price: PRICES.TOM,       name: "TWN4 MultiTech 2 LEGIC 45" },
+    PM:           { sku: "DLP1005012", ecat: ECAT.PM,           price: PRICES.PM,           name: "Projektmanagement Tagessatz" },
+    // USB-Tischleser
+    TOM:          { sku: "TOM1002895", ecat: ECAT.TOM,          price: PRICES.TOM,          name: "TWN4 MultiTech LEGIC 45 DT-U20-b" },
   };
 
   // ---------- Elements ----------
@@ -452,10 +514,15 @@
     a2NoCamHint: document.getElementById("a2NoCamHint"),
     a2Mismatch: document.getElementById("a2Mismatch"),
     a2MismatchLess: document.getElementById("a2MismatchLess"),
+    // a2 extra
+    a2Lighting: document.getElementById("a2Lighting"),
     // a3
     a3Printers: document.getElementById("a3Printers"),
     a3CodeReaderOptions: document.getElementById("a3CodeReaderOptions"),
     a3CodeReaderWrapper: document.getElementById("a3CodeReaderWrapper"),
+    a3RibbonWrapper: document.getElementById("a3RibbonWrapper"),
+    ribbonColor: document.getElementById("ribbonColor"),
+    ribbonBlack: document.getElementById("ribbonBlack"),
     a3NeedContact: document.getElementById("a3NeedContact"),
     // a4
     optCustom: document.getElementById("optCustom"),
@@ -516,20 +583,49 @@
   function addCartItem(container, item) {
     const box = document.createElement("div");
     box.className = "radio-card";
+    // warn border if printer qty below workstations
+    if (item.warnIfLess != null && item.qty < item.warnIfLess) box.style.borderColor = "#ef4444";
     const top = document.createElement("div");
     top.style.display="flex"; top.style.justifyContent="space-between"; top.style.alignItems="flex-start"; top.style.gap="10px";
     const left = document.createElement("div");
-    const name = document.createElement("div"); name.style.fontWeight="600"; name.textContent = item.name;
-    left.appendChild(name);
-    if (item.sku)  { const sku  = document.createElement("div"); sku.className="muted";  sku.style.fontSize="12px"; sku.textContent  = "Art.-Nr.: "+item.sku;           left.appendChild(sku);  }
-    if (item.ecat) { const ecat = document.createElement("div"); ecat.className="muted"; ecat.style.fontSize="12px"; ecat.textContent = "Kunden-Art.-Nr.: "+item.ecat; left.appendChild(ecat); }
+    const nameEl = document.createElement("div"); nameEl.style.fontWeight="600"; nameEl.textContent = item.name;
+    left.appendChild(nameEl);
+    if (item.sku)  { const sku = document.createElement("div"); sku.className="muted"; sku.style.fontSize="12px"; sku.textContent = "Art.-Nr.: "+item.sku; left.appendChild(sku); }
     if (item.note) { const note = document.createElement("div"); note.className="muted"; note.style.whiteSpace="pre-wrap"; note.style.marginTop="4px"; note.textContent = item.note; left.appendChild(note); }
     const right = document.createElement("div"); right.style.textAlign="right"; right.style.flexShrink="0";
     const qtyLabel = item.isPmDays ? "Tage" : "Menge";
-    right.innerHTML = qtyLabel+': <b>'+item.qty+'</b>';
-    if (item.price != null) {
-      const total = item.price * item.qty;
-      right.innerHTML += '<br><span class="muted" style="font-size:12px;">'+fmt(item.price)+' x '+item.qty+'<br>= <b>'+fmt(total)+'</b></span>';
+    if (item.editable && item.stateKey) {
+      const inp = document.createElement("input");
+      inp.type="number"; inp.className="qty-edit"; inp.min="1"; inp.value=item.qty;
+      inp.addEventListener("change", e => {
+        const v = Math.max(1, parseInt(e.target.value||'1',10));
+        state[item.stateKey] = v; e.target.value = v; update();
+      });
+      right.appendChild(document.createTextNode(qtyLabel+": "));
+      right.appendChild(inp);
+      if (item.price != null) {
+        const total = item.price * item.qty;
+        const priceEl = document.createElement("div"); priceEl.className="muted"; priceEl.style.fontSize="12px"; priceEl.style.marginTop="2px";
+        priceEl.innerHTML = fmt(item.price)+' x '+item.qty+'<br>= <b>'+fmt(total)+'</b>';
+        right.appendChild(priceEl);
+      }
+      if (item.deletable && item.deleteKey) {
+        const del = document.createElement("button"); del.className="cart-item-del"; del.textContent="✕ entfernen";
+        del.addEventListener("click", () => { state[item.deleteKey] = true; update(); });
+        right.appendChild(del);
+      }
+    } else {
+      right.innerHTML = qtyLabel+': <b>'+item.qty+'</b>';
+      if (item.price != null) {
+        const total = item.price * item.qty;
+        right.innerHTML += '<br><span class="muted" style="font-size:12px;">'+fmt(item.price)+' x '+item.qty+'<br>= <b>'+fmt(total)+'</b></span>';
+      }
+    }
+    // warn message below item
+    if (item.warnIfLess != null && item.qty < item.warnIfLess) {
+      const warn = document.createElement("div"); warn.className="warn"; warn.style.marginTop="6px"; warn.style.fontSize="12px";
+      warn.textContent = "Für Ausweiserstellung mit Druck & Codierung muss der Drucker per USB-Kabel mit dem PC der Ausweiserstellung verbunden werden. Pro Ausweiserstellung ist daher i.d.R. min. ein Drucker erforderlich – bitte prüfen!";
+      box.appendChild(top); box.appendChild(warn); container.appendChild(box); return;
     }
     top.appendChild(left); top.appendChild(right);
     box.appendChild(top);
@@ -564,7 +660,7 @@
   ];
   const CODEREADER = [
     { key:"integriert", label:"Integriertes Codiermodul" },
-    { key:"extern",     label:"Externer Tischleser" },
+    { key:"extern",     label:"USB-Tischleser" },
   ];
 
   // ---------- Wiring ----------
@@ -577,7 +673,15 @@
   el.telefon.addEventListener("input", e => { state.phone = e.target.value; update(); });
 
   // Auswahl 1
-  function setA1(v) { state.a1Variant = v; if (!/codierung/.test(v)) { state.tech = { legic:false, classic:false, desfire:false }; if (state.a3CodeReader) state.a3CodeReader = ""; } el.a1CodingHint.style.display = /codierung/.test(v) ? "block":"none"; el.a1UsbHint.style.display = v === "druck_codierung" ? "block":"none"; update(); }
+  function setA1(v) {
+    state.a1Variant = v;
+    if (!/codierung/.test(v)) { state.tech = { legic:false, classic:false, desfire:false }; state.a3CodeReader = ""; }
+    else if (v === "druck_codierung") { state.a3CodeReader = "integriert"; }
+    else if (v === "nur_codierung")   { state.a3CodeReader = "extern"; }
+    el.a1CodingHint.style.display = /codierung/.test(v) ? "block":"none";
+    el.a1UsbHint.style.display = v === "druck_codierung" ? "block":"none";
+    update();
+  }
   function setCodeReader(v) { state.a3CodeReader = v; update(); }
   radioCards(el.a1Options, "a1", A1, state.a1Variant, setA1);
   el.a1Work.addEventListener("input", e => {
@@ -606,7 +710,9 @@
   // Auswahl 3
   function setA3(v) {
     state.a3Printer = v;
-    if (/codierung/.test(state.a1Variant) && v && v !== "none" && !state.a3CodeReader) { state.a3CodeReader = "integriert"; }
+    state.qtyPrnRet = null; state.qtyPrnDir = null;
+    state.qtyRibbonRetC = null; state.qtyRetransfPlat = null; state.qtyCleanRet = null; state.qtyCleanRetDel = false;
+    state.qtyRibbonDirC = null; state.qtyRibbonDirB = null;
     update();
   }
 
@@ -620,6 +726,9 @@
   el.optTagAnalyzer.addEventListener("change", e => { state.opt.tag = e.target.checked; el.optTagAnalyzerDescRow.style.display = e.target.checked ? "block":"none"; update(); });
   el.optTagAnalyzerDesc.addEventListener("input", e => { state.opt.tagDesc = e.target.value; update(); });
   el.notes.addEventListener("input", e => { state.notes = e.target.value; update(); });
+  el.a2Lighting.addEventListener("change", e => { state.a2Lighting = e.target.checked; update(); });
+  el.ribbonColor.addEventListener("change", () => { state.a3Ribbon = "color"; state.qtyRibbonDirB = null; update(); });
+  el.ribbonBlack.addEventListener("change", () => { state.a3Ribbon = "black"; state.qtyRibbonDirC = null; update(); });
 
   // Projektmanagement Tage
   el.pmDaysInput.addEventListener("input", e => {
@@ -663,9 +772,14 @@
     // A3 printers
     el.a3Printers.className = "row row-3" + (!state.a3Printer ? " danger-ring" : "");
     radioCards(el.a3Printers, "a3", A3, state.a3Printer, setA3);
-    const needsCodeReader = /codierung/.test(state.a1Variant) && state.a3Printer && state.a3Printer !== "none";
+    // Codiereinheit: show whenever coding variant is selected
+    const needsCodeReader = /codierung/.test(state.a1Variant);
     if (el.a3CodeReaderWrapper) el.a3CodeReaderWrapper.style.display = needsCodeReader ? "" : "none";
     if (needsCodeReader) { el.a3CodeReaderOptions.className = "row row-2" + (!state.a3CodeReader ? " danger-ring" : ""); el.a3CodeReaderOptions.style.cssText = "--card-font-size:13px;"; radioCards(el.a3CodeReaderOptions, "codeReader", CODEREADER, state.a3CodeReader, setCodeReader); }
+    // Farbband: show when Direktdrucker
+    const showRibbon = state.a3Printer === "direkt";
+    el.a3RibbonWrapper.style.display = showRibbon ? "" : "none";
+    if (showRibbon) { el.ribbonColor.checked = state.a3Ribbon === "color"; el.ribbonBlack.checked = state.a3Ribbon === "black"; }
     el.a3NeedContact.style.display = (/codierung/.test(state.a1Variant) && state.a3Printer === "none") ? "block":"none";
 
     // PM Tage Input sync
@@ -688,7 +802,7 @@
     if (!state.a2Variant) return false;
     if (state.a2Variant === "mit") { if (!state.a2Camera) return false; if (!state.a2Work || state.a2Work < 1) return false; }
     if (!state.a3Printer) return false;
-    if (/codierung/.test(state.a1Variant) && state.a3Printer !== "none" && !state.a3CodeReader) return false;
+    if (/codierung/.test(state.a1Variant) && !state.a3CodeReader) return false;
     if (/codierung/.test(state.a1Variant) && !hasTech()) return false;
     return true;
   }
@@ -702,36 +816,79 @@
   function buildCartItems() {
     const items = [];
     const wp = Math.max(0, state.a1Work||0);
+    const aw = Math.max(0, state.a2Work||0);
 
-    // A1
-    if (state.a1Variant === "nur_druck") {
+    // A1 – IDfunction print immer, Encode-Module wenn Codierung
+    if (state.a1Variant) {
       items.push(Object.assign({}, P.PRINT, { qty: wp }));
-    } else if (state.a1Variant === "druck_codierung" || state.a1Variant === "nur_codierung") {
-      items.push(Object.assign({}, P.PRO, { qty: wp }));
-      if (state.tech.legic) items.push(Object.assign({}, P.T_LEGIC, { qty: wp }));
-      if (state.tech.classic) items.push(Object.assign({}, P.T_CLASSIC, { qty: wp }));
-      if (state.tech.desfire) items.push(Object.assign({}, P.T_DESFIRE, { qty: wp }));
-    }
-
-    // A2
-    if (state.a2Variant === "mit") {
-      const aw = Math.max(0, state.a2Work||0);
-      if (aw > 0) {
-        items.push(Object.assign({}, P.IDIMAGE, { qty: aw }));
-        if (state.a2KI) items.push(Object.assign({}, P.KI, { qty: aw }));
-        if (state.a2Camera === "webcam") items.push(Object.assign({}, P.CAM_USB, { qty: aw }));
-        if (state.a2Camera === "dslr") items.push(Object.assign({}, P.CAM_DSLR, { qty: aw }));
-        if (state.a2Camera === "none") items.push({ name: "Kamera nicht enthalten", qty: aw, note: "Bilddatei-Upload möglich; alternativ USB‑Webcam nutzbar." });
+      if (/codierung/.test(state.a1Variant)) {
+        if (state.tech.legic)    items.push(Object.assign({}, P.T_LEGIC,   { qty: wp }));
+        if (state.tech.classic)  items.push(Object.assign({}, P.T_CLASSIC, { qty: wp }));
+        if (state.tech.desfire)  items.push(Object.assign({}, P.T_DESFIRE, { qty: wp }));
       }
     }
 
-    // A3
-    if (state.a3Printer === "retransfer") items.push(Object.assign({}, P.PRN_RET, { qty: wp }));
-    if (state.a3Printer === "direkt") items.push(Object.assign({}, P.PRN_DIR, { qty: wp }));
-    if (/codierung/.test(state.a1Variant) && state.a3Printer && state.a3Printer !== "none") {
+    // A2 – Bilderfassung
+    if (state.a2Variant === "mit" && aw > 0) {
+      items.push(Object.assign({}, P.IDIMAGE, { qty: aw }));
+      if (state.a2KI) items.push(Object.assign({}, P.KI, { qty: aw }));
+      if (state.a2Camera === "webcam") items.push(Object.assign({}, P.CAM_USB, { qty: aw }));
+      if (state.a2Camera === "dslr") {
+        items.push(Object.assign({}, P.CAM_DSLR,  { qty: aw }));
+        items.push(Object.assign({}, P.NETZTEIL,   { qty: aw }));
+        items.push(Object.assign({}, P.USB_KABEL,  { qty: aw }));
+      }
+      if (state.a2Camera === "none") items.push({ name: "Kamera nicht enthalten", qty: aw, note: "Bilddatei-Upload möglich; alternativ USB‑Webcam nutzbar." });
+      // Stativ (editierbar, löschbar)
+      if (state.a2Camera === "dslr" || state.a2Camera === "webcam") {
+        if (!state.qtyStativDel) {
+          const qStativ = state.qtyStativ !== null ? state.qtyStativ : aw;
+          items.push(Object.assign({}, P.STATIV, { qty: qStativ, editable: true, stateKey: "qtyStativ", deletable: true, deleteKey: "qtyStativDel" }));
+        }
+      }
+      if (state.a2Lighting) items.push(Object.assign({}, P.LED, { qty: aw }));
+    }
+
+    // A3 – Retransferdrucker
+    if (state.a3Printer === "retransfer") {
+      const qRet = state.qtyPrnRet !== null ? state.qtyPrnRet : wp;
+      items.push(Object.assign({}, P.PRN_RET, { qty: qRet, editable: true, stateKey: "qtyPrnRet", warnIfLess: wp }));
+      items.push(Object.assign({}, P.BEND_REMEDY, { qty: qRet }));
+      const qRibC = state.qtyRibbonRetC !== null ? state.qtyRibbonRetC : qRet * 2;
+      items.push(Object.assign({}, P.RIBBON_RET_C, { qty: qRibC, editable: true, stateKey: "qtyRibbonRetC" }));
+      const qRetP = state.qtyRetransfPlat !== null ? state.qtyRetransfPlat : qRet * 2;
+      items.push(Object.assign({}, P.RETRANSF_PLAT, { qty: qRetP, editable: true, stateKey: "qtyRetransfPlat" }));
+      if (!state.qtyCleanRetDel) {
+        const qClR = state.qtyCleanRet !== null ? state.qtyCleanRet : qRet;
+        items.push(Object.assign({}, P.CLEAN_RET, { qty: qClR, editable: true, stateKey: "qtyCleanRet", deletable: true, deleteKey: "qtyCleanRetDel" }));
+      }
+    }
+
+    // A3 – Direktdrucker
+    if (state.a3Printer === "direkt") {
+      const qDir = state.qtyPrnDir !== null ? state.qtyPrnDir : wp;
+      items.push(Object.assign({}, P.PRN_DIR, { qty: qDir, editable: true, stateKey: "qtyPrnDir", warnIfLess: wp }));
+      items.push(Object.assign({}, P.CLEAN_DIR, { qty: qDir }));
+      if (state.a3Ribbon === "color") {
+        const qRibDC = state.qtyRibbonDirC !== null ? state.qtyRibbonDirC : qDir * 2;
+        items.push(Object.assign({}, P.RIBBON_DIR_C, { qty: qRibDC, editable: true, stateKey: "qtyRibbonDirC" }));
+      } else {
+        const qRibDB = state.qtyRibbonDirB !== null ? state.qtyRibbonDirB : qDir * 2;
+        items.push(Object.assign({}, P.RIBBON_DIR_B, { qty: qRibDB, editable: true, stateKey: "qtyRibbonDirB" }));
+      }
+    }
+
+    // A3 – Codiereinheit
+    if (/codierung/.test(state.a1Variant) && state.a3CodeReader) {
       if (state.a3CodeReader === "integriert") {
-        if (state.a3Printer === "retransfer") items.push(Object.assign({}, P.ENC_RET, { qty: wp }));
-        if (state.a3Printer === "direkt") items.push(Object.assign({}, P.ENC_DIR, { qty: wp }));
+        if (state.a3Printer === "retransfer") {
+          const qRet = state.qtyPrnRet !== null ? state.qtyPrnRet : wp;
+          items.push(Object.assign({}, P.ENC_RET, { qty: qRet }));
+        }
+        if (state.a3Printer === "direkt") {
+          const qDir = state.qtyPrnDir !== null ? state.qtyPrnDir : wp;
+          items.push(Object.assign({}, P.ENC_DIR, { qty: qDir }));
+        }
       } else if (state.a3CodeReader === "extern") {
         items.push(Object.assign({}, P.TOM, { qty: wp }));
       }
@@ -743,7 +900,7 @@
     if (state.opt.accessories) items.push({ name: "Option: Zubehör (Hüllen, Jojos, etc.) (Anfrage)", qty: 1, note: (state.opt.accessoriesDesc||"").trim() || "Bitte Bedarf an sales@evolutionid.com senden." });
     if (state.opt.tag) items.push({ name: "Option: evolutionID TagAnalyzer (Anfrage)", qty: 1, note: (state.opt.tagDesc||"").trim() || "Infos unter www.evolutionid.com oder sales@evolutionid.com." });
 
-    // Projektmanagement (Pflichtartikel)
+    // Projektmanagement
     const pmDays = calcPmDays();
     items.push(Object.assign({}, P.PM, { qty: pmDays, isPmDays: true }));
 
@@ -834,7 +991,6 @@
       },
       projektmanagement: {
         artikel_nr: P.PM.sku,
-        kunden_artikel_nr: P.PM.ecat,
         dienstleistungstage: calcPmDays(),
         manuell_angepasst: state.pmDays !== null,
       },
@@ -848,6 +1004,11 @@
   }
 
   // ---------- Init ----------
+  // Collapsible cards
+  document.querySelectorAll(".card-head").forEach(head => {
+    head.addEventListener("click", () => { head.closest(".card").classList.toggle("collapsed"); });
+  });
+
   // initial render blocks
   radioCards(el.a1Options, "a1", A1, state.a1Variant, setA1);
   checkCards(el.techCards, "tech", TECH, state.tech, toggleTech);
