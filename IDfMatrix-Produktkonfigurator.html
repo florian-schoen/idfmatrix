@@ -114,17 +114,17 @@
           <div class="card-head"><div class="dot"></div><div class="title">Auswahl 1 – Ausweiserstellung</div></div>
           <div class="card-body">
             <div id="a1Options" class="row row-3" style="margin-bottom: 12px;"></div>
-            <div class="row row-2" style="align-items:end;">
+                        <div class="row row-2" style="align-items:start;">
               <div>
                 <div class="label">Wie viele Arbeitsplätze zur Ausweiserstellung?</div>
                 <input id="a1Work" type="number" min="1" value="1"/>
               </div>
-              <div id="a1CodingHint" class="warn" style="display:none;">
-                <b>Hinweis:</b> Für Codierung wird eine <b>Vorabklärung mit evolutionID</b> empfohlen. Kontakt: <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a>
-              </div>
-              <div id="a1UsbHint" class="warn" style="display:none; margin-top:8px;">
-                <b>Hinweis:</b> Bei <b>Druck &amp; Codierung</b> muss der Drucker per <b>USB</b> mit dem PC verbunden werden.
-              </div>
+            </div>
+            <div id="a1CodingHint" class="warn" style="display:none; margin-top:8px;">
+              <b>Hinweis:</b> Für Codierung wird eine <b>Vorabklärung mit evolutionID</b> empfohlen. Kontakt: <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a>
+            </div>
+            <div id="a1UsbHint" class="warn" style="display:none; margin-top:6px;">
+              <b>Hinweis:</b> Bei <b>Druck &amp; Codierung</b> muss der Drucker per <b>USB</b> mit dem PC verbunden werden.
             </div>
 
             <div id="techBlock" style="display:none; margin-top:12px;">
@@ -144,10 +144,37 @@
               <div class="label">Kamera-Optionen</div>
               <div id="a2Cameras" class="row row-3" style="margin-bottom: 6px;"></div>
               <div class="row">
-                <label class="muted" style="display:flex; align-items:center; gap:8px;">
-                  <input id="a2KI" type="checkbox"/> KI‑Modul aktivieren (Hintergrund neutralisieren/ersetzen, automatische Qualitätsprüfung)
+                <label style="display:flex; align-items:center; gap:8px; font-weight:600;">
+                  <input id="a2KI" type="checkbox"/> KI-Modul aktivieren
                 </label>
-                <div id="a2KIHint" class="warn" style="display:none;">Für die reibungsfreie Nutzung des KI‑Moduls wird ein <b>leistungsfähiger PC</b> empfohlen – idealerweise mit <b>Grafikchip (GPU)</b>.</div>
+                <details class="info" style="margin-top:8px;">
+                  <summary><span class="badge">&#x2139;&#xFE0F; Info</span> <span class="emph">IDimage &amp; KI-Modul &#8211; Was steckt dahinter?</span></summary>
+                  <div class="muted" style="margin-top:8px;">
+                    <div class="row row-2">
+                      <div>
+                        <div class="label">IDimage &#8211; Bilderfassungssoftware</div>
+                        <p style="margin:6px 0;">Windows-Tool zur professionellen Bildaufnahme, direkt aus IDfunction aufrufbar. Unterstützt Webcam und SLR-Kamera.</p>
+                        <ul style="margin:0; padding-left:16px;">
+                          <li>Automatische Gesichtserkennung &amp; Bildausschnitt</li>
+                          <li>Bildgröße &amp; Hintergrundoptimierung</li>
+                          <li>Direkte Ablage der Bilddatei in IDfunction</li>
+                          <li>Unterstützung gängiger Bilddateiformate per Upload</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <div class="label">KI-Modul (IDF2001227)</div>
+                        <p style="margin:6px 0;">Zusätzmodul für IDimage zur KI-basierten Hintergrundentfernung &#8211; für homogene, optimierte Mitarbeiterfotos im Ausweisdruck.</p>
+                        <ul style="margin:0; padding-left:16px;">
+                          <li>Automatische Hintergrundentfernung per KI</li>
+                          <li>Einheitlicher, neutraler Hintergrund</li>
+                          <li>Automatische Qualitätsprüfung</li>
+                          <li><b>Empfehlung:</b> Leistungsfähiger PC mit Grafikchip (GPU)</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+                <div id="a2KIHint" class="warn" style="display:none; margin-top:6px;">Für die reibungsfreie Nutzung des KI-Moduls wird ein <b>leistungsfähiger PC</b> empfohlen &#8211; idealerweise mit <b>Grafikchip (GPU)</b>.</div>
               </div>
               <div class="row">
                 <div class="label">Wie viele Arbeitsplätze mit Bilderfassung?</div>
@@ -562,7 +589,7 @@
   function toggleTech(key, val) { state.tech[key] = val; update(); }
 
   // Auswahl 2
-  function setA2(v) { state.a2Variant = v; if (v !== "mit") { state.a2Camera=""; state.a2KI=false; } if (v === "mit") { state.a2Work = state.a1Work; el.a2Work.value = state.a1Work; } update(); }
+  function setA2(v) { state.a2Variant = v; if (v !== "mit") { state.a2Camera=""; state.a2KI=false; } if (v === "mit") { state.a2Work = state.a1Work; el.a2Work.value = state.a1Work; state.a2KI = true; el.a2KI.checked = true; } update(); }
   el.a2KI.addEventListener("change", e => { state.a2KI = e.target.checked; update(); });
   el.a2Work.addEventListener("input", e => {
     const max = Math.max(1, state.a1Work);
@@ -634,7 +661,7 @@
     el.a3Printers.className = "row row-3" + (!state.a3Printer ? " danger-ring" : "");
     radioCards(el.a3Printers, "a3", A3, state.a3Printer, setA3);
     const needsCodeReader = /codierung/.test(state.a1Variant) && state.a3Printer && state.a3Printer !== "none";
-    el.a3CodeReaderOptions.style.display = needsCodeReader ? "block" : "none";
+    el.a3CodeReaderOptions.style.display = needsCodeReader ? "" : "none";
     if (needsCodeReader) { el.a3CodeReaderOptions.className = "row row-2" + (!state.a3CodeReader ? " danger-ring" : ""); radioCards(el.a3CodeReaderOptions, "codeReader", CODEREADER, state.a3CodeReader, setCodeReader); }
     el.a3NeedContact.style.display = (/codierung/.test(state.a1Variant) && state.a3Printer === "none") ? "block":"none";
 
