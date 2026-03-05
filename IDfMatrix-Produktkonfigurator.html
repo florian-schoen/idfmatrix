@@ -39,6 +39,7 @@
   .label { font-size:14px; font-weight:600; margin-bottom:6px; color:#374151; }
   .muted { color: var(--muted); font-size: 13px; }
   .warn { border:1px solid var(--warn-border); background: var(--warn-bg); color: var(--warn-text); padding: 10px 12px; border-radius: 12px; font-size: 14px; }
+  .hint { border:1px solid #bfdbfe; background: #eff6ff; color: #1e40af; padding: 10px 12px; border-radius: 12px; font-size: 14px; }
   .danger-ring { border:1px solid #fecaca; outline: 2px solid #fecaca; border-radius: 12px; padding: 8px; }
   input[type="number"], input[type="text"], input[type="email"], input[type="tel"], textarea {
     width:100%; border:1px solid var(--border); border-radius:12px; padding:10px; font-size:14px; background:#fff;
@@ -120,10 +121,10 @@
                 <input id="a1Work" type="number" min="1" value="1"/>
               </div>
             </div>
-            <div id="a1CodingHint" class="warn" style="display:none; margin-top:8px;">
+            <div id="a1CodingHint" class="hint" style="display:none; margin-top:8px;">
               <b>Hinweis:</b> Für Codierung wird eine <b>Vorabklärung mit evolutionID</b> empfohlen. Kontakt: <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a>
             </div>
-            <div id="a1UsbHint" class="warn" style="display:none; margin-top:6px;">
+            <div id="a1UsbHint" class="hint" style="display:none; margin-top:6px;">
               <b>Hinweis:</b> Bei <b>Druck &amp; Codierung</b> muss der Drucker per <b>USB</b> mit dem PC verbunden werden.
             </div>
 
@@ -174,15 +175,15 @@
                     </div>
                   </div>
                 </details>
-                <div id="a2KIHint" class="warn" style="display:none; margin-top:6px;">Für die reibungsfreie Nutzung des KI-Moduls wird ein <b>leistungsfähiger PC</b> empfohlen &#8211; idealerweise mit <b>Grafikchip (GPU)</b>.</div>
+                <div id="a2KIHint" class="hint" style="display:none; margin-top:6px;"><b>Hinweis:</b> Für die reibungsfreie Nutzung des KI-Moduls wird ein <b>leistungsfähiger PC</b> empfohlen &#8211; idealerweise mit <b>Grafikchip (GPU)</b>.</div>
               </div>
               <div class="row">
                 <div class="label">Wie viele Arbeitsplätze mit Bilderfassung?</div>
                 <input id="a2Work" type="number" min="1" value="1"/>
               </div>
-              <div id="a2NoCamHint" class="warn" style="display:none; margin-top:6px;"><b>Hinweis:</b> Gängige Bilddateien können per Upload verwendet werden und/oder es kann eine <b>USB‑Webcam</b> eingesetzt werden.</div>
-              <div id="a2MismatchLess" class="warn" style="display:none; margin-top:6px;">Hinweis: Die Anzahl der Arbeitsplätze für die <b>Bilderfassung</b> ist <b>geringer</b> als die Arbeitsplätze für die <b>Ausweiserstellung</b>. Bitte prüfen, ob das beabsichtigt ist.</div>
-              <div id="a2Mismatch" class="warn" style="display:none; margin-top:6px;">Hinweis: Die Anzahl der Arbeitsplätze in <b>Auswahl 1</b> und <b>Bilderfassung</b> unterscheiden sich. Bitte prüfen.</div>
+              <div id="a2NoCamHint" class="hint" style="display:none; margin-top:6px;"><b>Hinweis:</b> Gängige Bilddateien können per Upload verwendet werden und/oder es kann eine <b>USB‑Webcam</b> eingesetzt werden.</div>
+              <div id="a2MismatchLess" class="hint" style="display:none; margin-top:6px;">Hinweis: Die Anzahl der Arbeitsplätze für die <b>Bilderfassung</b> ist <b>geringer</b> als die Arbeitsplätze für die <b>Ausweiserstellung</b>. Bitte prüfen, ob das beabsichtigt ist.</div>
+              <div id="a2Mismatch" class="hint" style="display:none; margin-top:6px;">Hinweis: Die Anzahl der Arbeitsplätze in <b>Auswahl 1</b> und <b>Bilderfassung</b> unterscheiden sich. Bitte prüfen.</div>
             </div>
           </div>
         </div>
@@ -227,7 +228,7 @@
               </details>
             </div>
 
-            <div id="a3NeedContact" class="warn" style="display:none; margin-top:8px;">Bitte <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a> kontaktieren, um zu prüfen, ob ein vorhandener Drucker genutzt und ein Codiermodul eingebaut werden kann.</div>
+            <div id="a3NeedContact" class="hint" style="display:none; margin-top:8px;">Bitte <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a> kontaktieren, um zu prüfen, ob ein vorhandener Drucker genutzt und ein Codiermodul eingebaut werden kann.</div>
           </div>
         </div>
 
@@ -291,27 +292,25 @@
         </div>
       </div>
 
-        <!-- Projektmanagement -->
-        <div class="card">
-          <div class="card-head"><div class="dot"></div><div class="title">Projektmanagement</div></div>
-          <div class="card-body">
-            <div class="muted" style="margin-bottom:10px;">
-              Pflichtartikel <b>DLP1005012</b> &ndash; Dienstleistungstage werden automatisch berechnet (1 Tag Basis + 0,5 Tage je zus&auml;tzlichem Arbeitsplatz). Der Wert kann manuell angepasst werden.
-            </div>
-            <div class="row">
-              <div class="label">Dienstleistungstage</div>
-              <input id="pmDaysInput" type="number" min="0.5" step="0.5" value="1" style="max-width:120px;" />
-            </div>
-          </div>
-        </div>
-
-      <!-- Warenkorb -->
+      <!-- Warenkorb -->>
       <aside id="cartCol">
         <div class="card sticky">
           <div class="card-body">
             <div style="display:flex; align-items:center; justify-content:space-between;">
               <div class="label" style="color: var(--brand-primary); font-size:18px;">Warenkorb</div>
               <span id="cartCount" class="badge">0 Positionen</span>
+            </div>
+
+            <!-- Projektmanagement im Warenkorb -->
+            <div style="margin-top:12px; padding:10px 12px; background:#f8f9fa; border-radius:10px; border:1px solid var(--border);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <div style="font-weight:600; font-size:13px;">Projektmanagement <span class="muted" style="font-weight:400;">(DLP1005012)</span></div>
+              </div>
+              <div class="muted" style="font-size:12px; margin-bottom:8px;">Automatisch berechnet &ndash; 1 Tag Basis + 0,5 Tage je zus&auml;tzlichem Arbeitsplatz.</div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="label" style="margin:0; white-space:nowrap;">Dienstleistungstage:</div>
+                <input id="pmDaysInput" type="number" min="0.5" step="0.5" value="1" style="max-width:80px; margin:0;" />
+              </div>
             </div>
 
             <div id="cartItems" style="margin-top:10px;"></div>
@@ -777,7 +776,7 @@
     if (state.a2Variant === "mit" && state.a2KI) hints.push("KI‑Modul: leistungsfähiger PC empfohlen (idealerweise mit Grafikchip).");
     if (state.a1Variant === "druck_codierung" && state.a3Printer === "none") hints.push("Kein Drucker bei „Druck & Codierung“ – bitte sales@evolutionid.com kontaktieren.");
     if (state.a2Variant === "mit" && state.a2Work < state.a1Work)     hints.push("Hinweis: Bilderfassung-Arbeitsplätze sind geringer als Ausweiserstellung – bitte prüfen, ob das beabsichtigt ist.");
-    el.cartHints.innerHTML = hints.map(h => '<div class="warn" style="margin-top:6px;">'+escapeHTML(h)+'</div>').join("");
+    el.cartHints.innerHTML = hints.map(h => '<div class="hint" style="margin-top:6px;">'+escapeHTML(h)+'</div>').join("");
 
     // general notes
     if (state.notes && state.notes.trim() !== "") {
