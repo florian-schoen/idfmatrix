@@ -4,9 +4,6 @@ export async function onRequest(context) {
   const PASS = env.SITE_PASSWORD || '';
   const TOKEN = 'auth=' + btoa(PASS);
 
-  // Allow login page (Cloudflare Pages redirects /login.html → /login via Pretty URLs)
-  if (url.pathname === '/login.html' || url.pathname === '/login') return next();
-
   // Handle POST /login
   if (request.method === 'POST' && url.pathname === '/login') {
     let body = '';
@@ -25,6 +22,9 @@ export async function onRequest(context) {
     }
     return Response.redirect(new URL('/login.html?error=1', request.url));
   }
+
+  // Allow login page (GET - Cloudflare Pretty URLs redirects /login.html → /login)
+  if (url.pathname === '/login.html' || url.pathname === '/login') return next();
 
   // Check auth cookie
   const cookieHeader = request.headers.get('cookie') || '';
