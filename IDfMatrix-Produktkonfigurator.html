@@ -607,6 +607,7 @@
     const validProject = state.projName.trim().length > 0;
     el.projWarn.style.display = validProject ? "none" : "block";
     // A1 options
+    el.a1Options.className = "row row-3" + (!state.a1Variant ? " danger-ring" : "");
     radioCards(el.a1Options, "a1", A1, state.a1Variant, setA1);
     el.a1UsbHint.style.display = state.a1Variant === "druck_codierung" ? "block":"none";
     // show tech block if coding variant
@@ -617,9 +618,11 @@
     el.techWarn.style.display = (needsTech && !hasTech()) ? "block":"none";
 
     // A2 options and extras
+    el.a2Options.className = "row row-2" + (!state.a2Variant ? " danger-ring" : "");
     radioCards(el.a2Options, "a2", A2, state.a2Variant, v=>{ setA2(v); });
     el.a2Extras.style.display = (state.a2Variant === "mit") ? "block":"none";
     if (state.a2Variant === "mit") {
+      el.a2Cameras.className = "row row-3" + (!state.a2Camera ? " danger-ring" : "");
       radioCards(el.a2Cameras, "cam", CAM, state.a2Camera, setCam);
       el.a2NoCamHint.style.display = (state.a2Camera === "none") ? "block":"none";
       el.a2KIHint.style.display = state.a2KI ? "block":"none";
@@ -628,10 +631,11 @@
     }
 
     // A3 printers
+    el.a3Printers.className = "row row-3" + (!state.a3Printer ? " danger-ring" : "");
     radioCards(el.a3Printers, "a3", A3, state.a3Printer, setA3);
     const needsCodeReader = /codierung/.test(state.a1Variant) && state.a3Printer && state.a3Printer !== "none";
     el.a3CodeReaderOptions.style.display = needsCodeReader ? "block" : "none";
-    if (needsCodeReader) radioCards(el.a3CodeReaderOptions, "codeReader", CODEREADER, state.a3CodeReader, setCodeReader);
+    if (needsCodeReader) { el.a3CodeReaderOptions.className = "row row-2" + (!state.a3CodeReader ? " danger-ring" : ""); radioCards(el.a3CodeReaderOptions, "codeReader", CODEREADER, state.a3CodeReader, setCodeReader); }
     el.a3NeedContact.style.display = (/codierung/.test(state.a1Variant) && state.a3Printer === "none") ? "block":"none";
 
     // PM Tage Input sync
