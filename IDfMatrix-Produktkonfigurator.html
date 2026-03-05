@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8" />
@@ -262,6 +262,20 @@
         </div>
       </div>
 
+        <!-- Projektmanagement -->
+        <div class="card">
+          <div class="card-head"><div class="dot"></div><div class="title">Projektmanagement</div></div>
+          <div class="card-body">
+            <div class="muted" style="margin-bottom:10px;">
+              Pflichtartikel <b>DLP1005012</b> &ndash; Dienstleistungstage werden automatisch berechnet (1 Tag Basis + 0,5 Tage je zus&auml;tzlichem Arbeitsplatz). Der Wert kann manuell angepasst werden.
+            </div>
+            <div class="row">
+              <div class="label">Dienstleistungstage</div>
+              <input id="pmDaysInput" type="number" min="0.5" step="0.5" value="1" style="max-width:120px;" />
+            </div>
+          </div>
+        </div>
+
       <!-- Warenkorb -->
       <aside id="cartCol">
         <div class="card sticky">
@@ -272,6 +286,7 @@
             </div>
 
             <div id="cartItems" style="margin-top:10px;"></div>
+            <div id="cartTotal"></div>
 
             <!-- Kunde/Projekt -->
             <div id="customerBox" style="margin-top:12px;" class="muted"></div>
@@ -316,27 +331,65 @@
       accessories: false, accessoriesDesc: "",
       tag: false, tagDesc: ""
     },
-    notes: ""
+    notes: "", pmDays: null
+  };
+
+  // ---------- ECAT-Nummern (Kunden-Artikelnummern) - hier anpassen ----------
+  const ECAT = {
+    PRINT:     "ECA1001211",
+    PRO:       "ECA1001201",
+    T_LEGIC:   "ECA1001206",
+    T_CLASSIC: "ECA1001035",
+    T_DESFIRE: "ECA1001205",
+    IDIMAGE:   "ECA2001226",
+    KI:        "ECA2001227",
+    CAM_USB:   "ECA4005018",
+    CAM_DSLR:  "ECA4005013",
+    PRN_RET:   "ECA4001007",
+    PRN_DIR:   "ECA4001016",
+    ENC_RET:   "ECA4001004",
+    ENC_DIR:   "ECA4001014",
+    PM:        "ECA1005012",
+  };
+
+  // ---------- Preise (EUR pro Einheit) - hier anpassen ----------
+  const PRICES = {
+    PRINT:     50,
+    PRO:       50,
+    T_LEGIC:   50,
+    T_CLASSIC: 50,
+    T_DESFIRE: 50,
+    IDIMAGE:   50,
+    KI:        50,
+    CAM_USB:   50,
+    CAM_DSLR:  50,
+    PRN_RET:   50,
+    PRN_DIR:   50,
+    ENC_RET:   50,
+    ENC_DIR:   50,
+    PM:        50,
   };
 
   // ---------- Products ----------
   const P = {
     // A1
-    PRINT: { sku: "IDF1001211", name: "IDfunction print" },
-    PRO:   { sku: "IDF1001201", name: "IDfunction Professional" },
-    T_LEGIC:   { sku: "IDF1001206", name: "IDfunction Encode LEGIC advant" },
-    T_CLASSIC: { sku: "IDF1001035", name: "IDfunction Encode MIFARE Classic" },
-    T_DESFIRE: { sku: "IDF1001205", name: "IDfunction Encode DESFire EV1" },
+    PRINT:     { sku: "IDF1001211", ecat: ECAT.PRINT,     price: PRICES.PRINT,     name: "IDfunction print" },
+    PRO:       { sku: "IDF1001201", ecat: ECAT.PRO,       price: PRICES.PRO,       name: "IDfunction Professional" },
+    T_LEGIC:   { sku: "IDF1001206", ecat: ECAT.T_LEGIC,   price: PRICES.T_LEGIC,   name: "IDfunction Encode LEGIC advant" },
+    T_CLASSIC: { sku: "IDF1001035", ecat: ECAT.T_CLASSIC, price: PRICES.T_CLASSIC, name: "IDfunction Encode MIFARE Classic" },
+    T_DESFIRE: { sku: "IDF1001205", ecat: ECAT.T_DESFIRE, price: PRICES.T_DESFIRE, name: "IDfunction Encode DESFire EV1" },
     // A2
-    IDIMAGE:   { sku: "IDF2001226", name: "IDimage Bilderfassungssoftware" },
-    KI:        { sku: "IDF2001227", name: "IDimage acquisition KI-Option" },
-    CAM_USB:   { sku: "CAN4005018", name: "Webcam, HD-Video 1080p, 60 FPS, HDR" },
-    CAM_DSLR:  { sku: "CAN4005013", name: "Canon Spiegelreflex-Kamera" },
+    IDIMAGE:   { sku: "IDF2001226", ecat: ECAT.IDIMAGE,   price: PRICES.IDIMAGE,   name: "IDimage Bilderfassungssoftware" },
+    KI:        { sku: "IDF2001227", ecat: ECAT.KI,        price: PRICES.KI,        name: "IDimage acquisition KI-Option" },
+    CAM_USB:   { sku: "CAN4005018", ecat: ECAT.CAM_USB,   price: PRICES.CAM_USB,   name: "Webcam, HD-Video 1080p, 60 FPS, HDR" },
+    CAM_DSLR:  { sku: "CAN4005013", ecat: ECAT.CAM_DSLR,  price: PRICES.CAM_DSLR,  name: "Canon Spiegelreflex-Kamera" },
     // A3
-    PRN_RET:   { sku: "MAT4001007", name: "MATICA XID8600 Dual Side" },
-    PRN_DIR:   { sku: "MAT4001016", name: "Matica MC310 Dual Side" },
-    ENC_RET:   { sku: "MAT4001004", name: "MATICA XID8300/XID8600 Kodiereinheit" },
-    ENC_DIR:   { sku: "MAT4001014", name: "MATICA MC110/MC210/MC310 Kodiereinheit" },
+    PRN_RET:   { sku: "MAT4001007", ecat: ECAT.PRN_RET,   price: PRICES.PRN_RET,   name: "MATICA XID8600 Dual Side" },
+    PRN_DIR:   { sku: "MAT4001016", ecat: ECAT.PRN_DIR,   price: PRICES.PRN_DIR,   name: "Matica MC310 Dual Side" },
+    ENC_RET:   { sku: "MAT4001004", ecat: ECAT.ENC_RET,   price: PRICES.ENC_RET,   name: "MATICA XID8300/XID8600 Kodiereinheit" },
+    ENC_DIR:   { sku: "MAT4001014", ecat: ECAT.ENC_DIR,   price: PRICES.ENC_DIR,   name: "MATICA MC110/MC210/MC310 Kodiereinheit" },
+    // Projektmanagement
+    PM:        { sku: "DLP1005012", ecat: ECAT.PM,        price: PRICES.PM,        name: "Projektmanagement" },
   };
 
   // ---------- Elements ----------
@@ -392,6 +445,8 @@
     cartHints: document.getElementById("cartHints"),
     statusText: document.getElementById("statusText"),
     checkoutBtn: document.getElementById("checkoutBtn"),
+    pmDaysInput: document.getElementById("pmDaysInput"),
+    cartTotal: document.getElementById("cartTotal"),
   };
 
   // ---------- Render helpers ----------
@@ -424,6 +479,7 @@
   function kv(k,v) {
     return '<div class="kv"><div class="k">'+escapeHTML(k)+'</div><div class="v">'+escapeHTML(v)+'</div></div>';
   }
+  function fmt(n) { return n.toLocaleString("de-DE", { style:"currency", currency:"EUR" }); }
   function addCartItem(container, item) {
     const box = document.createElement("div");
     box.className = "radio-card";
@@ -432,10 +488,17 @@
     const left = document.createElement("div");
     const name = document.createElement("div"); name.style.fontWeight="600"; name.textContent = item.name;
     left.appendChild(name);
-    if (item.sku) { const sku = document.createElement("div"); sku.className="muted"; sku.style.fontSize="12px"; sku.textContent = "Art.-Nr.: "+item.sku; left.appendChild(sku); }
+    if (item.sku)  { const sku  = document.createElement("div"); sku.className="muted";  sku.style.fontSize="12px"; sku.textContent  = "Art.-Nr.: "+item.sku;           left.appendChild(sku);  }
+    if (item.ecat) { const ecat = document.createElement("div"); ecat.className="muted"; ecat.style.fontSize="12px"; ecat.textContent = "Kunden-Art.-Nr.: "+item.ecat; left.appendChild(ecat); }
     if (item.note) { const note = document.createElement("div"); note.className="muted"; note.style.whiteSpace="pre-wrap"; note.style.marginTop="4px"; note.textContent = item.note; left.appendChild(note); }
-    const qty = document.createElement("div"); qty.innerHTML = 'Menge: <b>'+item.qty+'</b>';
-    top.appendChild(left); top.appendChild(qty);
+    const right = document.createElement("div"); right.style.textAlign="right"; right.style.flexShrink="0";
+    const qtyLabel = item.isPmDays ? "Tage" : "Menge";
+    right.innerHTML = qtyLabel+': <b>'+item.qty+'</b>';
+    if (item.price != null) {
+      const total = item.price * item.qty;
+      right.innerHTML += '<br><span class="muted" style="font-size:12px;">'+fmt(item.price)+' x '+item.qty+'<br>= <b>'+fmt(total)+'</b></span>';
+    }
+    top.appendChild(left); top.appendChild(right);
     box.appendChild(top);
     container.appendChild(box);
   }
@@ -522,6 +585,13 @@
   el.optTagAnalyzerDesc.addEventListener("input", e => { state.opt.tagDesc = e.target.value; update(); });
   el.notes.addEventListener("input", e => { state.notes = e.target.value; update(); });
 
+  // Projektmanagement Tage
+  el.pmDaysInput.addEventListener("input", e => {
+    const v = parseFloat(e.target.value);
+    state.pmDays = (!isNaN(v) && v > 0) ? v : null;
+    update();
+  });
+
   // Checkout
   el.checkoutBtn.addEventListener("click", () => { if (!isValid()) return; exportJSON(); });
 
@@ -563,6 +633,10 @@
     radioCards(el.a3Printers, "a3", A3, state.a3Printer, setA3);
     el.a3NeedContact.style.display = (state.a1Variant === "druck_codierung" && state.a3Printer === "none") ? "block":"none";
 
+    // PM Tage Input sync
+    const autoPm = 1 + Math.max(0, (state.a1Work||1) - 1) * 0.5;
+    if (state.pmDays === null) el.pmDaysInput.value = autoPm;
+
     // Cart
     renderCart();
 
@@ -581,6 +655,12 @@
     if (!state.a3Printer) return false;
     if (/codierung/.test(state.a1Variant) && !hasTech()) return false;
     return true;
+  }
+
+  function calcPmDays() {
+    const wp = Math.max(1, state.a1Work||1);
+    const auto = 1 + Math.max(0, wp - 1) * 0.5;
+    return state.pmDays !== null ? state.pmDays : auto;
   }
 
   function buildCartItems() {
@@ -623,6 +703,10 @@
     if (state.opt.accessories) items.push({ name: "Option: Zubehör (Hüllen, Jojos, etc.) (Anfrage)", qty: 1, note: (state.opt.accessoriesDesc||"").trim() || "Bitte Bedarf an sales@evolutionid.com senden." });
     if (state.opt.tag) items.push({ name: "Option: evolutionID TagAnalyzer (Anfrage)", qty: 1, note: (state.opt.tagDesc||"").trim() || "Infos unter www.evolutionid.com oder sales@evolutionid.com." });
 
+    // Projektmanagement (Pflichtartikel)
+    const pmDays = calcPmDays();
+    items.push(Object.assign({}, P.PM, { qty: pmDays, isPmDays: true }));
+
     return items;
   }
 
@@ -631,6 +715,9 @@
     el.cartItems.innerHTML = "";
     items.forEach(it => addCartItem(el.cartItems, it));
     el.cartCount.textContent = items.length + " Positionen";
+    // Gesamtpreis
+    const totalPrice = items.reduce((sum, it) => sum + (it.price != null ? it.price * it.qty : 0), 0);
+    if (el.cartTotal) el.cartTotal.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:2px solid var(--border);margin-top:8px;"><b>Gesamtpreis</b><b>'+fmt(totalPrice)+'</b></div>';
 
     // customer box
     const parts = [];
@@ -705,6 +792,12 @@
         ki_hardware_hinweis: (state.a2Variant === "mit" && state.a2KI) ? "Für KI‑Modul wird ein leistungsfähiger PC (ideal: mit Grafikchip) empfohlen." : undefined,
         drucker_kodier_hinweis: (state.a1Variant === "druck_codierung" && state.a3Printer === "none") ? "Kontaktieren Sie sales@evolutionid.com bzgl. vorhandenem Drucker/Codiermodul." : undefined,
         mengen_abweichung: (state.a2Variant === "mit" && state.a2Work !== state.a1Work) ? `Abweichende Mengen: Auswahl1=${state.a1Work}, Bilderfassung=${state.a2Work}` : undefined,
+      },
+      projektmanagement: {
+        artikel_nr: P.PM.sku,
+        kunden_artikel_nr: P.PM.ecat,
+        dienstleistungstage: calcPmDays(),
+        manuell_angepasst: state.pmDays !== null,
       },
       warenkorb: buildCartItems(),
     };
