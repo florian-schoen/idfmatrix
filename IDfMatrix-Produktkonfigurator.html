@@ -265,9 +265,23 @@
           </div>
         </div>
 
+        <!-- Auswahl 5 – Umsetzung -->
+        <div class="card">
+          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 5 – Umsetzung</div><span class="chevron">▾</span></div>
+          <div class="card-body">
+            <div id="a5Options" class="row row-2" style="margin-bottom:12px;"></div>
+            <div id="a5RemoteHint" class="hint" style="display:none; margin-top:8px;">
+              <b>Hinweis Remote-Umsetzung:</b> Für eine effiziente Inbetriebnahme wird ein <b>technisch versierter Ansprechpartner vor Ort</b> benötigt, der die Hardware eigenständig anschließen und grundlegende IT-Einstellungen (Netzwerk, Treiber, Benutzerrechte) vornehmen kann. evolutionID übernimmt die Einrichtung der Software und Konfiguration per Fernzugriff.
+            </div>
+            <div id="a5OnsiteHint" class="hint" style="display:none; margin-top:8px;">
+              <b>Hinweis Vor-Ort-Umsetzung:</b> Es fallen Reisekosten an. Die Höhe richtet sich nach der Entfernung zu unserem Standort in München (80636). Bitte ggf. Rücksprache mit evolutionID halten.
+            </div>
+          </div>
+        </div>
+
         <!-- Auswahl 4 -->
         <div class="card">
-          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 5 – Optionale Module</div><span class="chevron">▾</span></div>
+          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 6 – Optionale Module</div><span class="chevron">▾</span></div>
           <div class="card-body">
             <label class="check-card" style="display:flex; gap:10px; align-items:flex-start;">
               <input id="optCustom" type="checkbox" />
@@ -339,7 +353,10 @@
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                 <div style="font-weight:600; font-size:13px;">Projektmanagement <span class="muted" style="font-weight:400;">(DLP1005012)</span></div>
               </div>
-              <div class="muted" style="font-size:12px; margin-bottom:8px;">Automatisch berechnet &ndash; 1 Tag Basis + 0,5 Tage je zus&auml;tzlichem Arbeitsplatz.</div>
+              <div class="muted" style="font-size:12px; margin-bottom:8px;">
+                Automatisch berechnet &ndash; 1 Tag Basis + 0,5 Tage je zus&auml;tzlichem Arbeitsplatz.<br>
+                <span style="margin-top:4px; display:block;">Beinhaltet: Abklärung generell &bull; Einrichtung IDfunction &bull; Datenbankanbindung &bull; Inbetriebnahme Ausweiserstellung</span>
+              </div>
               <div style="display:flex; align-items:center; gap:8px;">
                 <div class="label" style="margin:0; white-space:nowrap;">Dienstleistungstage:</div>
                 <input id="pmDaysInput" type="number" min="0.5" step="0.5" value="1" style="max-width:80px; margin:0;" />
@@ -366,6 +383,24 @@
                 <a href="mailto:sales@evolutionid.com"> sales@evolutionid.com</a>.
               </div>
             </div>
+          </div>
+        </div>
+        <!-- Softwaremaintenance -->
+        <div class="card" style="margin-top:16px;">
+          <div class="card-body">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <div class="label" style="color: var(--brand-primary); font-size:18px;">Softwaremaintenance</div>
+              <span class="badge">Mindestlaufzeit 3 Jahre</span>
+            </div>
+            <div class="muted" style="font-size:12px; margin-top:4px; margin-bottom:10px;">
+              Wird automatisch auf Basis der gewählten Software berechnet. Mindestlaufzeit 3 Jahre – die Anzahl pro Artikel ergibt sich aus <b>Lizenzen × Laufzeit&nbsp;(Jahre)</b>.
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+              <div class="label" style="margin:0; white-space:nowrap; font-size:13px;">Laufzeit (Jahre):</div>
+              <input id="maintYearsInput" type="number" min="3" step="1" value="3" style="max-width:80px; margin:0;" />
+            </div>
+            <div id="maintItems" style="margin-top:6px;"></div>
+            <div id="maintTotal"></div>
           </div>
         </div>
       </aside>
@@ -399,6 +434,10 @@
       accessories: false, accessoriesDesc: "",
       tag: false, tagDesc: ""
     },
+    // a5
+    a5Umsetzung: "",
+    // maintenance
+    maintYears: 3,
     notes: "", pmDays: null
   };
 
@@ -499,6 +538,14 @@
     PM:           { sku: "DLP1005012", ecat: ECAT.PM,           price: PRICES.PM,           name: "Projektmanagement Tagessatz" },
     // USB-Tischleser
     TOM:          { sku: "TOM1002895", ecat: ECAT.TOM,          price: PRICES.TOM,          name: "TWN4 MultiTech LEGIC 45 DT-U20-b" },
+    // SW-Maintenance
+    SUP_PRINT:   { sku: "SUP1001048", price: null, name: "SW-Maintenance IDfunction print" },
+    SUP_PRO:     { sku: "SUP1001046", price: null, name: "SW-Maintenance IDfunction Professional" },
+    SUP_DESFIRE: { sku: "SUP1001051", price: null, name: "SW-Maintenance IDfunction DESFire" },
+    SUP_MIFARE:  { sku: "SUP1001050", price: null, name: "SW-Maintenance IDfunction MIFARE" },
+    SUP_LEGIC:   { sku: "SUP1001052", price: null, name: "SW-Maintenance IDfunction Legic" },
+    SUP_IDIMAGE: { sku: "SUP1001084", price: null, name: "SW-Maintenance IDimage" },
+    SUP_KI:      { sku: "SUP1001085", price: null, name: "SW-Maintenance IDimage KI" },
   };
 
   // ---------- Elements ----------
@@ -540,6 +587,10 @@
     ribbonColor: document.getElementById("ribbonColor"),
     ribbonBlack: document.getElementById("ribbonBlack"),
     a3NeedContact: document.getElementById("a3NeedContact"),
+    // a5
+    a5Options: document.getElementById("a5Options"),
+    a5RemoteHint: document.getElementById("a5RemoteHint"),
+    a5OnsiteHint: document.getElementById("a5OnsiteHint"),
     // a4
     optCustom: document.getElementById("optCustom"),
     optCustomDescRow: document.getElementById("optCustomDescRow"),
@@ -556,6 +607,9 @@
     notes: document.getElementById("notes"),
     // cart
     cartItems: document.getElementById("cartItems"),
+    maintItems: document.getElementById("maintItems"),
+    maintTotal: document.getElementById("maintTotal"),
+    maintYearsInput: document.getElementById("maintYearsInput"),
     cartCount: document.getElementById("cartCount"),
     customerBox: document.getElementById("customerBox"),
     cartHints: document.getElementById("cartHints"),
@@ -683,6 +737,10 @@
     { key:"integriert", label:"Integriertes Codiermodul" },
     { key:"extern",     label:"USB-Tischleser" },
   ];
+  const A5 = [
+    { key:"remote",   label:"Remote" },
+    { key:"vor_ort",  label:"Vor Ort" },
+  ];
 
   // ---------- Wiring ----------
   // Customer
@@ -754,6 +812,13 @@
   el.optTagAnalyzer.addEventListener("change", e => { state.opt.tag = e.target.checked; el.optTagAnalyzerDescRow.style.display = e.target.checked ? "block":"none"; update(); });
   el.optTagAnalyzerDesc.addEventListener("input", e => { state.opt.tagDesc = e.target.value; update(); });
   el.notes.addEventListener("input", e => { state.notes = e.target.value; update(); });
+  function setA5(v) { state.a5Umsetzung = v; update(); }
+
+  // Maintenance Laufzeit
+  el.maintYearsInput.addEventListener("change", e => {
+    const v = Math.max(3, parseInt(e.target.value||'3', 10));
+    state.maintYears = v; e.target.value = v; update();
+  });
   el.a2Stativ.addEventListener("change", e => { state.a2Stativ = e.target.checked; update(); });
   el.a2Lighting.addEventListener("change", e => { state.a2Lighting = e.target.checked; update(); });
   el.ribbonColor.addEventListener("change", () => { state.a3Ribbon = "color"; state.qtyRibbonDirB = null; update(); });
@@ -811,6 +876,12 @@
     if (showRibbon) { el.ribbonColor.checked = state.a3Ribbon === "color"; el.ribbonBlack.checked = state.a3Ribbon === "black"; }
     el.a3NeedContact.style.display = (/codierung/.test(state.a1Variant) && state.a3Printer === "none") ? "block":"none";
 
+    // A5 Umsetzung
+    el.a5Options.className = "row row-2" + (!state.a5Umsetzung ? " danger-ring" : "");
+    radioCards(el.a5Options, "a5", A5, state.a5Umsetzung, setA5);
+    el.a5RemoteHint.style.display  = state.a5Umsetzung === "remote"  ? "block" : "none";
+    el.a5OnsiteHint.style.display  = state.a5Umsetzung === "vor_ort" ? "block" : "none";
+
     // PM Tage Input sync
     const autoPm = 1 + Math.max(0, (state.a1Work||1) - 1) * 0.5;
     if (state.pmDays === null) el.pmDaysInput.value = autoPm;
@@ -833,6 +904,7 @@
     if (!state.a3Printer) return false;
     if (/codierung/.test(state.a1Variant) && !state.a3CodeReader) return false;
     if (/codierung/.test(state.a1Variant) && !hasTech()) return false;
+    if (!state.a5Umsetzung) return false;
     return true;
   }
 
@@ -945,7 +1017,57 @@
     return items;
   }
 
+  // Maintenance-Mapping: Haupt-SKU → Maintenance-Produkt
+  const MAINT_MAP = {
+    "IDF1001211": P.SUP_PRINT,
+    "IDF1001201": P.SUP_PRO,
+    "IDF1001205": P.SUP_DESFIRE,
+    "IDF1001204": P.SUP_MIFARE,
+    "IDF1001206": P.SUP_LEGIC,
+    "IDF2001226": P.SUP_IDIMAGE,
+    "IDF2001227": P.SUP_KI,
+  };
+
+  function buildMaintItems() {
+    const years = Math.max(3, state.maintYears || 3);
+    const maint = [];
+    buildCartItems().forEach(it => {
+      const sup = it.sku ? MAINT_MAP[it.sku] : null;
+      if (sup) maint.push(Object.assign({}, sup, { qty: it.qty * years, baseQty: it.qty, years }));
+    });
+    return maint;
+  }
+
+  function renderMaint() {
+    const items = buildMaintItems();
+    el.maintItems.innerHTML = "";
+    if (items.length === 0) {
+      el.maintItems.innerHTML = '<div class="muted" style="font-size:13px;">Keine wartungspflichtigen Artikel im Warenkorb.</div>';
+      el.maintTotal.innerHTML = "";
+      return;
+    }
+    items.forEach(it => {
+      const box = document.createElement("div"); box.className = "radio-card"; box.style.marginBottom = "6px";
+      const top = document.createElement("div"); top.style.cssText = "display:flex;justify-content:space-between;align-items:flex-start;gap:10px;";
+      const left = document.createElement("div");
+      const nameEl = document.createElement("div"); nameEl.style.fontWeight = "600"; nameEl.textContent = it.name;
+      const skuEl = document.createElement("div"); skuEl.className = "muted"; skuEl.style.fontSize = "12px"; skuEl.textContent = "Art.-Nr.: " + it.sku;
+      const noteEl = document.createElement("div"); noteEl.className = "muted"; noteEl.style.fontSize = "12px";
+      noteEl.textContent = it.baseQty + " Lizenz" + (it.baseQty !== 1 ? "en" : "") + " × " + it.years + " Jahre";
+      left.appendChild(nameEl); left.appendChild(skuEl); left.appendChild(noteEl);
+      const right = document.createElement("div"); right.style.cssText = "text-align:right;flex-shrink:0;font-size:13px;";
+      right.innerHTML = "Menge: <b>" + it.qty + "</b>";
+      if (it.price != null) right.innerHTML += '<br><span class="muted" style="font-size:12px;">' + fmt(it.price) + ' × ' + it.qty + ' = <b>' + fmt(it.price * it.qty) + '</b></span>';
+      top.appendChild(left); top.appendChild(right); box.appendChild(top);
+      el.maintItems.appendChild(box);
+    });
+    const total = items.reduce((s, it) => s + (it.price != null ? it.price * it.qty : 0), 0);
+    if (total > 0) el.maintTotal.innerHTML = '<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid var(--border);margin-top:8px;"><b>Gesamt</b><b>' + fmt(total) + '</b></div>';
+    else el.maintTotal.innerHTML = '<div class="muted" style="font-size:12px;margin-top:8px;">Preise werden separat kommuniziert.</div>';
+  }
+
   function renderCart() {
+    renderMaint();
     const items = buildCartItems();
     el.cartItems.innerHTML = "";
     items.forEach(it => addCartItem(el.cartItems, it));
@@ -1011,6 +1133,22 @@
     // 2 Leerzeilen
     rows.push(""); rows.push("");
 
+    // Softwaremaintenance
+    const maintItems = buildMaintItems();
+    if (maintItems.length > 0) {
+      rows.push([csvCell("Softwaremaintenance (Laufzeit: " + state.maintYears + " Jahre)")].join(";"));
+      rows.push(["Position","Artikelnummer","Artikelbezeichnung","Einzelpreis (EUR)","Stückzahl","Positionspreis (EUR)"].map(csvCell).join(";"));
+      let maintTotal = 0;
+      maintItems.forEach((it, i) => {
+        const ep = it.price != null ? it.price : 0;
+        const pp = ep * it.qty;
+        maintTotal += pp;
+        rows.push([i+1, it.sku||"", it.name||"", it.price != null ? fmtNum(ep) : "auf Anfrage", it.qty, it.price != null ? fmtNum(pp) : ""].map(csvCell).join(";"));
+      });
+      if (maintTotal > 0) rows.push(["","","","","Gesamt:",fmtNum(maintTotal)].map(csvCell).join(";"));
+      rows.push(""); rows.push("");
+    }
+
     // Kundendaten
     const kd = [
       ["Projektname", state.projName],
@@ -1043,6 +1181,7 @@
   radioCards(el.a2Options, "a2", A2, state.a2Variant, setA2);
   radioCards(el.a2Cameras, "cam", CAM, state.a2Camera, setCam);
   radioCards(el.a3Printers, "a3", A3, state.a3Printer, setA3);
+  radioCards(el.a5Options, "a5", A5, state.a5Umsetzung, setA5);
   update();
 })();
 </script>
