@@ -362,7 +362,7 @@
             <div class="checkout">
               <button id="checkoutBtn" class="btn btn-primary" disabled>Anfrage abschließen</button>
               <div class="muted" style="margin-top:6px;">
-                Mit Klick auf <b>„Anfrage abschließen“</b> wird Ihre JSON‑Konfiguration heruntergeladen. Bitte senden Sie die Datei per E‑Mail an
+                Mit Klick auf <b>„Anfrage abschließen”</b> wird eine CSV‑Datei heruntergeladen. Bitte senden Sie die Datei per E‑Mail an
                 <a href="mailto:sales@evolutionid.com"> sales@evolutionid.com</a>.
               </div>
             </div>
@@ -767,7 +767,7 @@
   });
 
   // Checkout
-  el.checkoutBtn.addEventListener("click", () => { if (!isValid()) return; exportJSON(); });
+  el.checkoutBtn.addEventListener("click", () => { if (!isValid()) return; exportCSV(); });
 
   // ---------- Update UI ----------
   function update() {
@@ -932,7 +932,7 @@
     if (state.opt.tag) items.push({ name: "Option: evolutionID TagAnalyzer (Anfrage)", qty: 1, note: (state.opt.tagDesc||"").trim() || "Infos unter www.evolutionid.com oder sales@evolutionid.com." });
 
     // Blank PVC Cards (immer)
-    const qMed = state.qtyMed !== null ? state.qtyMed : 1;
+    const qMed = state.qtyMed !== null ? state.qtyMed : 50;
     items.push(Object.assign({}, P.MED, { qty: qMed, editable: true, stateKey: "qtyMed" }));
 
     // Projektmanagement
@@ -984,60 +984,49 @@
     }
   }
 
-  function exportJSON() {
-    const cfg = {
-      kunde: {
-        projektname: state.projName,
-        firma: state.company || undefined,
-        name: state.lastName || undefined,
-        vorname: state.firstName || undefined,
-        email: state.email || undefined,
-        telefon: state.phone || undefined,
-      },
-      auswahl1: {
-        variant: state.a1Variant,
-        arbeitsplaetze: state.a1Work,
-        technologien: /codierung/.test(state.a1Variant) ? {
-          legic_advant: state.tech.legic || undefined,
-          mifare_classic: state.tech.classic || undefined,
-          mifare_desfire: state.tech.desfire || undefined,
-        } : undefined,
-      },
-      auswahl2: {
-        variant: state.a2Variant,
-        kamera: state.a2Variant === "mit" ? state.a2Camera : undefined,
-        ki_modul: state.a2Variant === "mit" ? state.a2KI : undefined,
-        arbeitsplaetze_bilderfassung: state.a2Variant === "mit" ? state.a2Work : undefined,
-      },
-      auswahl3: {
-        drucker: state.a3Printer,
-        codiereinheit: (/codierung/.test(state.a1Variant) && state.a3Printer && state.a3Printer !== "none") ? state.a3CodeReader : undefined,
-      },
-      auswahl4: {
-        anpassung_prozesse: state.opt.custom ? { gewaehlt: true, beschreibung: (state.opt.customDesc||undefined) } : undefined,
-        verbrauchsmaterial: state.opt.supplies ? { gewaehlt: true, beschreibung: (state.opt.suppliesDesc||undefined) } : undefined,
-        zubehoer: state.opt.accessories ? { gewaehlt: true, beschreibung: (state.opt.accessoriesDesc||undefined) } : undefined,
-        tag_analyzer: state.opt.tag ? { gewaehlt: true, beschreibung: (state.opt.tagDesc||undefined) } : undefined,
-        notizen: state.notes || undefined,
-      },
-      hinweise: {
-        codierung_vorabklaerung: /codierung/.test(state.a1Variant) ? "Empfohlen: Vorabklärung Codierung mit evolutionID (sales@evolutionid.com)." : undefined,
-        kamera_upload_hinweis: (state.a2Variant === "mit" && state.a2Camera === "none") ? "Gängige Bilddateien per Upload nutzbar bzw. USB‑Webcam möglich." : undefined,
-        ki_hardware_hinweis: (state.a2Variant === "mit" && state.a2KI) ? "Für KI‑Modul wird ein leistungsfähiger PC (ideal: mit Grafikchip) empfohlen." : undefined,
-        drucker_kodier_hinweis: (state.a1Variant === "druck_codierung" && state.a3Printer === "none") ? "Kontaktieren Sie sales@evolutionid.com bzgl. vorhandenem Drucker/Codiermodul." : undefined,
-        mengen_abweichung: (state.a2Variant === "mit" && state.a2Work !== state.a1Work) ? `Abweichende Mengen: Auswahl1=${state.a1Work}, Bilderfassung=${state.a2Work}` : undefined,
-      },
-      projektmanagement: {
-        artikel_nr: P.PM.sku,
-        dienstleistungstage: calcPmDays(),
-        manuell_angepasst: state.pmDays !== null,
-      },
-      warenkorb: buildCartItems(),
-    };
-    const blob = new Blob([JSON.stringify(cfg, null, 2)], { type: "application/json" });
+  function exportCSV() {
+    function csvCell(v) {
+      const s = (v === null || v === undefined) ? "" : String(v);
+      return '"' + s.replace(/"/g, '""') + '"';
+    }
+    function fmtNum(n) { return typeof n === "number" ? n.toFixed(2).replace(".", ",") : ""; }
+
+    const items = buildCartItems().filter(it => it.sku); // nur echte Artikel
+    const rows = [];
+
+    // Header
+    rows.push(["Position","Artikelnummer","Artikelbezeichnung","Einzelpreis (EUR)","Stückzahl","Positionspreis (EUR)"].map(csvCell).join(";"));
+
+    let total = 0;
+    items.forEach((it, i) => {
+      const ep = it.price != null ? it.price : 0;
+      const pp = ep * it.qty;
+      total += pp;
+      rows.push([i+1, it.sku||"", it.name||"", fmtNum(ep), it.qty, fmtNum(pp)].map(csvCell).join(";"));
+    });
+
+    // Summenzeile
+    rows.push(["","","","","Gesamt:",fmtNum(total)].map(csvCell).join(";"));
+
+    // 2 Leerzeilen
+    rows.push(""); rows.push("");
+
+    // Kundendaten
+    const kd = [
+      ["Projektname", state.projName],
+      ["Vorname",     state.firstName],
+      ["Nachname",    state.lastName],
+      ["Firma",       state.company],
+      ["E-Mail",      state.email],
+      ["Telefon",     state.phone],
+    ];
+    kd.forEach(([k, v]) => { if (v) rows.push([csvCell(k), csvCell(v)].join(";")); });
+
+    const bom = "\uFEFF"; // UTF-8 BOM für Excel
+    const blob = new Blob([bom + rows.join("\r\n")], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = "idfunction-matrix-konfiguration.json";
+    a.href = url; a.download = "idfunction-matrix-konfiguration.csv";
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
 
