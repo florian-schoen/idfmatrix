@@ -341,7 +341,8 @@
 
       <!-- Warenkorb -->
       <aside id="cartCol">
-        <div class="card sticky">
+        <div style="position:sticky; top:20px; max-height:calc(100vh - 40px); overflow-y:auto; display:flex; flex-direction:column; gap:16px;">
+        <div class="card">
           <div class="card-body">
             <div style="display:flex; align-items:center; justify-content:space-between;">
               <div class="label" style="color: var(--brand-primary); font-size:18px;">Warenkorb</div>
@@ -355,7 +356,7 @@
               </div>
               <div class="muted" style="font-size:12px; margin-bottom:8px;">
                 Automatisch berechnet &ndash; 1 Tag Basis + 0,5 Tage je zus&auml;tzlichem Arbeitsplatz.<br>
-                <span style="margin-top:4px; display:block;">Beinhaltet: Abklärung generell &bull; Einrichtung IDfunction &bull; Datenbankanbindung &bull; Inbetriebnahme Ausweiserstellung</span>
+                <span style="margin-top:4px; display:block;">Beinhaltet: Abklärung, Einrichtung und Inbetriebnahme IDfunction &bull; Datenbankanbindung &bull; Abklärung generell</span>
               </div>
               <div style="display:flex; align-items:center; gap:8px;">
                 <div class="label" style="margin:0; white-space:nowrap;">Dienstleistungstage:</div>
@@ -386,7 +387,7 @@
           </div>
         </div>
         <!-- Softwaremaintenance -->
-        <div class="card" style="margin-top:16px;">
+        <div class="card">
           <div class="card-body">
             <div style="display:flex; align-items:center; justify-content:space-between;">
               <div class="label" style="color: var(--brand-primary); font-size:18px;">Softwaremaintenance</div>
@@ -403,6 +404,7 @@
             <div id="maintTotal"></div>
           </div>
         </div>
+        </div><!-- end sticky wrapper -->
       </aside>
     </div>
   </div>
