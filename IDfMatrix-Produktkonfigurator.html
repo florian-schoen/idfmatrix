@@ -408,7 +408,7 @@
   </div>
 
 <script>
-(function(){
+(async function(){
   // ---------- State ----------
   const state = {
     // customer
@@ -548,7 +548,14 @@
     SUP_KI:      { sku: "SUP1001085", price: 45.15, name: "SW-Maintenance IDimage KI" },
   };
 
-  // Apply admin overrides (injected by middleware from KV)
+  // Load admin price overrides from API
+  try {
+    const _r = await fetch('/api/articles');
+    if (_r.ok) {
+      const _d = await _r.json();
+      if (_d && typeof _d === 'object') window.ARTICLE_OVERRIDES = _d;
+    }
+  } catch(_) {}
   if (window.ARTICLE_OVERRIDES) {
     Object.values(P).forEach(function(p) {
       var ov = window.ARTICLE_OVERRIDES[p.sku];

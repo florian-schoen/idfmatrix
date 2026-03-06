@@ -56,7 +56,9 @@ export async function onRequest(context) {
 
   // ── Admin pages & API: require admin auth ───────────────────────────────
   if (url.pathname === '/admin.html' || url.pathname === '/admin' || url.pathname.startsWith('/api/')) {
-    if (!hasAdminAuth) {
+    // Allow GET /api/articles for site-authenticated users (read-only)
+    const isSiteReadArticles = url.pathname === '/api/articles' && request.method === 'GET' && hasSiteAuth;
+    if (!hasAdminAuth && !isSiteReadArticles) {
       if (url.pathname.startsWith('/api/')) {
         return new Response(JSON.stringify({ error: 'Unauthorized' }), {
           status: 401,
