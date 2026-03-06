@@ -340,68 +340,67 @@
       </div>
 
       <!-- Warenkorb -->
-      <aside id="cartCol">
-        <div style="position:sticky; top:20px; max-height:calc(100vh - 40px); overflow-y:auto; display:flex; flex-direction:column; gap:16px;">
-        <div class="card">
-          <div class="card-body">
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-              <div class="label" style="color: var(--brand-primary); font-size:18px;">Warenkorb</div>
-              <span id="cartCount" class="badge">0 Positionen</span>
+      <aside id=”cartCol”>
+        <div style=”position:sticky; top:20px; max-height:calc(100vh - 40px); overflow-y:auto;”>
+        <div class=”card”>
+          <div class=”card-body”>
+            <div style=”display:flex; align-items:center; justify-content:space-between;”>
+              <div class=”label” style=”color: var(--brand-primary); font-size:18px;”>Warenkorb Projekt</div>
+              <span id=”cartCount” class=”badge”>0 Positionen</span>
             </div>
 
             <!-- Projektmanagement im Warenkorb -->
-            <div style="margin-top:12px; padding:10px 12px; background:#f8f9fa; border-radius:10px; border:1px solid var(--border);">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                <div style="font-weight:600; font-size:13px;">Projektmanagement <span class="muted" style="font-weight:400;">(DLP1005012)</span></div>
+            <div style=”margin-top:12px; padding:10px 12px; background:#f8f9fa; border-radius:10px; border:1px solid var(--border);”>
+              <div style=”display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;”>
+                <div style=”font-weight:600; font-size:13px;”>Projektmanagement <span class=”muted” style=”font-weight:400;”>(DLP1005012)</span></div>
               </div>
-              <div class="muted" style="font-size:12px; margin-bottom:8px;">
+              <div class=”muted” style=”font-size:12px; margin-bottom:8px;”>
                 Automatisch berechnet &ndash; 1 Tag Basis + 0,5 Tage je zus&auml;tzlichem Arbeitsplatz.<br>
-                <span style="margin-top:4px; display:block;">Beinhaltet: Abklärung, Einrichtung und Inbetriebnahme IDfunction &bull; Datenbankanbindung &bull; Abklärung generell</span>
+                <span style=”margin-top:4px; display:block;”>Beinhaltet: Abklärung, Einrichtung und Inbetriebnahme IDfunction &bull; Datenbankanbindung &bull; Abklärung generell</span>
               </div>
-              <div style="display:flex; align-items:center; gap:8px;">
-                <div class="label" style="margin:0; white-space:nowrap;">Dienstleistungstage:</div>
-                <input id="pmDaysInput" type="number" min="0.5" step="0.5" value="1" style="max-width:80px; margin:0;" />
+              <div style=”display:flex; align-items:center; gap:8px;”>
+                <div class=”label” style=”margin:0; white-space:nowrap;”>Dienstleistungstage:</div>
+                <input id=”pmDaysInput” type=”number” min=”0.5” step=”0.5” value=”1” style=”max-width:80px; margin:0;” />
               </div>
             </div>
 
-            <div id="cartItems" style="margin-top:10px;"></div>
-            <div id="cartTotal"></div>
+            <div id=”cartItems” style=”margin-top:10px;”></div>
+            <div id=”cartTotal”></div>
+
+            <!-- Softwaremaintenance -->
+            <div style=”border-top:2px solid var(--border); margin-top:16px; padding-top:12px;”>
+              <div style=”display:flex; align-items:center; justify-content:space-between;”>
+                <div class=”label” style=”color: var(--brand-primary); font-size:16px;”>Softwaremaintenance</div>
+                <span class=”badge”>mind. 3 Jahre</span>
+              </div>
+              <div class=”muted” style=”font-size:12px; margin-top:4px; margin-bottom:10px;”>
+                Automatisch berechnet &ndash; <b>Lizenzen &times; Laufzeit&nbsp;(Jahre)</b>, Mindestlaufzeit 3 Jahre.
+              </div>
+              <div style=”display:flex; align-items:center; gap:8px; margin-bottom:10px;”>
+                <div class=”label” style=”margin:0; white-space:nowrap; font-size:13px;”>Laufzeit (Jahre):</div>
+                <input id=”maintYearsInput” type=”number” min=”3” step=”1” value=”3” style=”max-width:80px; margin:0;” />
+              </div>
+              <div id=”maintItems”></div>
+              <div id=”maintTotal”></div>
+            </div>
 
             <!-- Kunde/Projekt -->
-            <div id="customerBox" style="margin-top:12px;" class="muted"></div>
+            <div id=”customerBox” style=”margin-top:12px;” class=”muted”></div>
 
             <!-- Hinweise -->
-            <div id="cartHints" style="margin-top:12px;"></div>
+            <div id=”cartHints” style=”margin-top:12px;”></div>
 
             <!-- Status -->
-            <div id="statusText" class="muted" style="margin-top:12px;">Bitte Kunden-/Projektnamen und alle Pflichtauswahlen treffen.</div>
+            <div id=”statusText” class=”muted” style=”margin-top:12px;”>Bitte Kunden-/Projektnamen und alle Pflichtauswahlen treffen.</div>
 
             <!-- Checkout -->
-            <div class="checkout">
-              <button id="checkoutBtn" class="btn btn-primary" disabled>Anfrage abschließen</button>
-              <div class="muted" style="margin-top:6px;">
+            <div class=”checkout”>
+              <button id=”checkoutBtn” class=”btn btn-primary” disabled>Anfrage abschließen</button>
+              <div class=”muted” style=”margin-top:6px;”>
                 Mit Klick auf <b>„Anfrage abschließen”</b> wird eine CSV‑Datei heruntergeladen. Bitte senden Sie die Datei per E‑Mail an
-                <a href="mailto:sales@evolutionid.com"> sales@evolutionid.com</a>.
+                <a href=”mailto:sales@evolutionid.com”> sales@evolutionid.com</a>.
               </div>
             </div>
-          </div>
-        </div>
-        <!-- Softwaremaintenance -->
-        <div class="card">
-          <div class="card-body">
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-              <div class="label" style="color: var(--brand-primary); font-size:18px;">Softwaremaintenance</div>
-              <span class="badge">Mindestlaufzeit 3 Jahre</span>
-            </div>
-            <div class="muted" style="font-size:12px; margin-top:4px; margin-bottom:10px;">
-              Wird automatisch auf Basis der gewählten Software berechnet. Mindestlaufzeit 3 Jahre – die Anzahl pro Artikel ergibt sich aus <b>Lizenzen × Laufzeit&nbsp;(Jahre)</b>.
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
-              <div class="label" style="margin:0; white-space:nowrap; font-size:13px;">Laufzeit (Jahre):</div>
-              <input id="maintYearsInput" type="number" min="3" step="1" value="3" style="max-width:80px; margin:0;" />
-            </div>
-            <div id="maintItems" style="margin-top:6px;"></div>
-            <div id="maintTotal"></div>
           </div>
         </div>
         </div><!-- end sticky wrapper -->
@@ -1035,7 +1034,10 @@
     const maint = [];
     buildCartItems().forEach(it => {
       const sup = it.sku ? MAINT_MAP[it.sku] : null;
-      if (sup) maint.push(Object.assign({}, sup, { qty: it.qty * years, baseQty: it.qty, years }));
+      if (sup) {
+        const maintPrice = it.price != null ? Math.round(it.price * 0.21 * 100) / 100 : null;
+        maint.push(Object.assign({}, sup, { price: maintPrice, qty: it.qty * years, baseQty: it.qty, years }));
+      }
     });
     return maint;
   }
@@ -1065,7 +1067,7 @@
     });
     const total = items.reduce((s, it) => s + (it.price != null ? it.price * it.qty : 0), 0);
     if (total > 0) el.maintTotal.innerHTML = '<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid var(--border);margin-top:8px;"><b>Gesamt</b><b>' + fmt(total) + '</b></div>';
-    else el.maintTotal.innerHTML = '<div class="muted" style="font-size:12px;margin-top:8px;">Preise werden separat kommuniziert.</div>';
+    else el.maintTotal.innerHTML = "";
   }
 
   function renderCart() {
@@ -1145,7 +1147,7 @@
         const ep = it.price != null ? it.price : 0;
         const pp = ep * it.qty;
         maintTotal += pp;
-        rows.push([i+1, it.sku||"", it.name||"", it.price != null ? fmtNum(ep) : "auf Anfrage", it.qty, it.price != null ? fmtNum(pp) : ""].map(csvCell).join(";"));
+        rows.push([i+1, it.sku||"", it.name||"", fmtNum(ep), it.qty, fmtNum(pp)].map(csvCell).join(";"));
       });
       if (maintTotal > 0) rows.push(["","","","","Gesamt:",fmtNum(maintTotal)].map(csvCell).join(";"));
       rows.push(""); rows.push("");
