@@ -26,7 +26,7 @@
   h1 { font-size: 28px; margin: 0 0 4px; font-weight: 600; }
   .sub { color: var(--brand-primary); font-size: 14px; margin-bottom: 8px; }
   .grid { display:grid; grid-template-columns: 1fr; gap: 24px; }
-  @media (min-width: 1024px) { .grid { grid-template-columns: 2fr 1fr; align-items: start; } }
+  @media (min-width: 1024px) { .grid { grid-template-columns: 2fr 1fr; } }
   .sticky { position: sticky; top: 20px; }
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.05); }
   .card-head { display:flex; align-items:center; gap:10px; padding:16px 20px; border-bottom:1px solid var(--border); color: var(--brand-primary); }
@@ -341,15 +341,20 @@
       </div>
 
       <!-- Warenkorb -->
-      <div id=”cartCol”>
-        <div class=”card sticky”>
+      <aside id=”cartCol”>
+        <div style=”position:sticky; top:20px; max-height:calc(100vh - 40px); overflow-y:auto;”>
+        <div class=”card”>
           <div class=”card-body”>
             <div style=”display:flex; align-items:center; justify-content:space-between;”>
-              <div class=”label” style=”color:var(--brand-primary); font-size:18px;”>Warenkorb Projekt</div>
+              <div class=”label” style=”color: var(--brand-primary); font-size:18px;”>Warenkorb Projekt</div>
               <span id=”cartCount” class=”badge”>0 Positionen</span>
             </div>
+
+            <!-- Projektmanagement im Warenkorb -->
             <div style=”margin-top:12px; padding:10px 12px; background:#f8f9fa; border-radius:10px; border:1px solid var(--border);”>
-              <div style=”font-weight:600; font-size:13px; margin-bottom:4px;”>Projektmanagement <span class=”muted” style=”font-weight:400;”>(DLP1005012)</span></div>
+              <div style=”display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;”>
+                <div style=”font-weight:600; font-size:13px;”>Projektmanagement <span class=”muted” style=”font-weight:400;”>(DLP1005012)</span></div>
+              </div>
               <div class=”muted” style=”font-size:12px; margin-bottom:8px;”>
                 Automatisch berechnet &ndash; 1 Tag Basis + 0,5 Tage je zus&auml;tzlichem Arbeitsplatz.<br>
                 <span style=”margin-top:4px; display:block;”>Beinhaltet: Abklärung, Einrichtung und Inbetriebnahme IDfunction &bull; Datenbankanbindung &bull; Abklärung generell</span>
@@ -359,11 +364,14 @@
                 <input id=”pmDaysInput” type=”number” min=”0.5” step=”0.5” value=”1” style=”max-width:80px; margin:0;” />
               </div>
             </div>
+
             <div id=”cartItems” style=”margin-top:10px;”></div>
             <div id=”cartTotal”></div>
+
+            <!-- Softwaremaintenance -->
             <div style=”border-top:2px solid var(--border); margin-top:16px; padding-top:12px;”>
               <div style=”display:flex; align-items:center; justify-content:space-between;”>
-                <div class=”label” style=”color:var(--brand-primary); font-size:16px;”>Softwaremaintenance</div>
+                <div class=”label” style=”color: var(--brand-primary); font-size:16px;”>Softwaremaintenance</div>
                 <span class=”badge”>mind. 3 Jahre</span>
               </div>
               <div class=”muted” style=”font-size:12px; margin-top:4px; margin-bottom:10px;”>
@@ -376,9 +384,17 @@
               <div id=”maintItems”></div>
               <div id=”maintTotal”></div>
             </div>
+
+            <!-- Kunde/Projekt -->
             <div id=”customerBox” style=”margin-top:12px;” class=”muted”></div>
+
+            <!-- Hinweise -->
             <div id=”cartHints” style=”margin-top:12px;”></div>
+
+            <!-- Status -->
             <div id=”statusText” class=”muted” style=”margin-top:12px;”>Bitte Kunden-/Projektnamen und alle Pflichtauswahlen treffen.</div>
+
+            <!-- Checkout -->
             <div class=”checkout”>
               <button id=”checkoutBtn” class=”btn btn-primary” disabled>Anfrage abschließen</button>
               <div class=”muted” style=”margin-top:6px;”>
@@ -388,7 +404,8 @@
             </div>
           </div>
         </div>
-      </div>
+        </div><!-- end sticky wrapper -->
+      </aside>
     </div>
   </div>
 
