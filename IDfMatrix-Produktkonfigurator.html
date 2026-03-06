@@ -366,6 +366,23 @@
             <div id="cartItems" style="margin-top:10px;"></div>
             <div id="cartTotal"></div>
 
+            <!-- Softwaremaintenance -->
+            <div style="border-top:2px solid var(--border); margin-top:16px; padding-top:12px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+                <div class="label" style="color: var(--brand-primary); font-size:16px; margin-bottom:0;">Softwaremaintenance</div>
+                <span class="badge">Mindestlaufzeit 3 Jahre</span>
+              </div>
+              <div class="muted" style="font-size:12px; margin-top:4px; margin-bottom:10px;">
+                Wird automatisch auf Basis der gewählten Software berechnet. Mindestlaufzeit 3 Jahre – die Anzahl pro Artikel ergibt sich aus <b>Lizenzen × Laufzeit&nbsp;(Jahre)</b>.
+              </div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                <div class="label" style="margin:0; white-space:nowrap; font-size:13px;">Laufzeit (Jahre):</div>
+                <input id="maintYearsInput" type="number" min="3" step="1" value="3" style="max-width:80px; margin:0;" />
+              </div>
+              <div id="maintItems" style="margin-top:6px;"></div>
+              <div id="maintTotal"></div>
+            </div>
+
             <!-- Kunde/Projekt -->
             <div id="customerBox" style="margin-top:12px;" class="muted"></div>
 
@@ -383,24 +400,6 @@
                 <a href="mailto:sales@evolutionid.com"> sales@evolutionid.com</a>.
               </div>
             </div>
-          </div>
-        </div>
-        <!-- Softwaremaintenance -->
-        <div class="card" style="margin-top:16px;">
-          <div class="card-body">
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-              <div class="label" style="color: var(--brand-primary); font-size:18px;">Softwaremaintenance</div>
-              <span class="badge">Mindestlaufzeit 3 Jahre</span>
-            </div>
-            <div class="muted" style="font-size:12px; margin-top:4px; margin-bottom:10px;">
-              Wird automatisch auf Basis der gewählten Software berechnet. Mindestlaufzeit 3 Jahre – die Anzahl pro Artikel ergibt sich aus <b>Lizenzen × Laufzeit&nbsp;(Jahre)</b>.
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
-              <div class="label" style="margin:0; white-space:nowrap; font-size:13px;">Laufzeit (Jahre):</div>
-              <input id="maintYearsInput" type="number" min="3" step="1" value="3" style="max-width:80px; margin:0;" />
-            </div>
-            <div id="maintItems" style="margin-top:6px;"></div>
-            <div id="maintTotal"></div>
           </div>
         </div>
       </aside>
@@ -539,13 +538,13 @@
     // USB-Tischleser
     TOM:          { sku: "TOM1002895", ecat: ECAT.TOM,          price: PRICES.TOM,          name: "TWN4 MultiTech LEGIC 45 DT-U20-b" },
     // SW-Maintenance
-    SUP_PRINT:   { sku: "SUP1001048", price: null, name: "SW-Maintenance IDfunction print" },
-    SUP_PRO:     { sku: "SUP1001046", price: null, name: "SW-Maintenance IDfunction Professional" },
-    SUP_DESFIRE: { sku: "SUP1001051", price: null, name: "SW-Maintenance IDfunction DESFire" },
-    SUP_MIFARE:  { sku: "SUP1001050", price: null, name: "SW-Maintenance IDfunction MIFARE" },
-    SUP_LEGIC:   { sku: "SUP1001052", price: null, name: "SW-Maintenance IDfunction Legic" },
-    SUP_IDIMAGE: { sku: "SUP1001084", price: null, name: "SW-Maintenance IDimage" },
-    SUP_KI:      { sku: "SUP1001085", price: null, name: "SW-Maintenance IDimage KI" },
+    SUP_PRINT:   { sku: "SUP1001048", price: 182.70, name: "SW-Maintenance IDfunction print" },
+    SUP_PRO:     { sku: "SUP1001046", price: 488.80, name: "SW-Maintenance IDfunction Professional" },
+    SUP_DESFIRE: { sku: "SUP1001051", price: 495.11, name: "SW-Maintenance IDfunction DESFire" },
+    SUP_MIFARE:  { sku: "SUP1001050", price: 191.82, name: "SW-Maintenance IDfunction MIFARE" },
+    SUP_LEGIC:   { sku: "SUP1001052", price: 311.76, name: "SW-Maintenance IDfunction Legic" },
+    SUP_IDIMAGE: { sku: "SUP1001084", price: 90.30, name: "SW-Maintenance IDimage" },
+    SUP_KI:      { sku: "SUP1001085", price: 45.15, name: "SW-Maintenance IDimage KI" },
   };
 
   // ---------- Elements ----------
@@ -1009,7 +1008,7 @@
 
     // Projektmanagement
     const pmDays = calcPmDays();
-    items.push(Object.assign({}, P.PM, { qty: pmDays, isPmDays: true }));
+    items.push(Object.assign({}, P.PM, { qty: pmDays, isPmDays: true, note: "Abklärung, Einrichtung und Umsetzung IDfunction" }));
     if (/codierung/.test(state.a1Variant)) {
       items.push(Object.assign({}, P.PM, { qty: 2, isPmDays: true, note: "Abklärung, Erstellung und Test der Codierung" }));
     }
