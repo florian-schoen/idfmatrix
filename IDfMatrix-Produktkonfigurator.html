@@ -192,6 +192,12 @@
               <div id="a2NoCamHint" class="hint" style="display:none; margin-top:6px;"><b>Hinweis:</b> Gängige Bilddateien können per Upload verwendet werden und/oder es kann eine <b>USB‑Webcam</b> eingesetzt werden.</div>
               <div class="row" style="margin-top:8px;">
                 <label style="display:flex; align-items:center; gap:8px; font-weight:600;">
+                  <input id="a2Stativ" type="checkbox"/> Stative für Kamera hinzufügen
+                </label>
+                <div class="muted" style="font-size:12px; margin-top:2px;">Tripod-Stativ für SLR &amp; Webcam (CAN4005015)</div>
+              </div>
+              <div class="row" style="margin-top:8px;">
+                <label style="display:flex; align-items:center; gap:8px; font-weight:600;">
                   <input id="a2Lighting" type="checkbox"/> Fotobeleuchtung hinzufügen
                 </label>
                 <div class="muted" style="font-size:12px; margin-top:2px;">LED-Beleuchtungskit für optimale Bilderfassung (CAN4005019)</div>
@@ -380,9 +386,9 @@
     // a3
     a3Printer: "", a3CodeReader: "", a3Ribbon: "color",
     // a2 extra
-    a2Lighting: false, qtyLed: null,
+    a2Lighting: false, qtyLed: null, a2Stativ: false,
     // cart qty overrides (null = auto)
-    qtyPrnRet: null, qtyPrnDir: null, qtyStativ: null, qtyStativDel: false,
+    qtyPrnRet: null, qtyPrnDir: null, qtyStativ: null, qtyMed: null,
     qtyRibbonRetC: null, qtyRetransfPlat: null, qtyCleanRet: null,
     qtyRibbonDirC: null, qtyRibbonDirB: null,
     qtyCleanRetDel: false,
@@ -423,6 +429,8 @@
     CLEAN_DIR:       "ECA4001003",
     PM:              "ECA1005012",
     TOM:             "ECA1002895",
+    PRO:             "ECA1001201",
+    MED:             "ECA1002019",
   };
 
   // ---------- Preise (EUR pro Einheit) - hier anpassen ----------
@@ -452,12 +460,16 @@
     CLEAN_DIR:      26.54,
     PM:           1340.00,
     TOM:           215.82,
+    PRO:          2327.61,
+    MED:             0.36,
   };
 
   // ---------- Products ----------
   const P = {
     // A1
     PRINT:        { sku: "IDF1001211", ecat: ECAT.PRINT,        price: PRICES.PRINT,        name: "IDfunction print" },
+    PRO:          { sku: "IDF1001201", ecat: ECAT.PRO,          price: PRICES.PRO,          name: "IDfunction Professional" },
+    MED:          { sku: "MED1002019", ecat: ECAT.MED,          price: PRICES.MED,          name: "Blank PVC Cards" },
     T_LEGIC:      { sku: "IDF1001206", ecat: ECAT.T_LEGIC,      price: PRICES.T_LEGIC,      name: "IDfunction Encode LEGIC® advant" },
     T_CLASSIC:    { sku: "IDF1001204", ecat: ECAT.T_CLASSIC,    price: PRICES.T_CLASSIC,    name: "IDfunction Encode MIFARE® Classic" },
     T_DESFIRE:    { sku: "IDF1001205", ecat: ECAT.T_DESFIRE,    price: PRICES.T_DESFIRE,    name: "IDfunction Encode DESFire EV1 (*EV2/EV3)" },
@@ -518,6 +530,7 @@
     a2Mismatch: document.getElementById("a2Mismatch"),
     a2MismatchLess: document.getElementById("a2MismatchLess"),
     // a2 extra
+    a2Stativ: document.getElementById("a2Stativ"),
     a2Lighting: document.getElementById("a2Lighting"),
     // a3
     a3Printers: document.getElementById("a3Printers"),
@@ -713,7 +726,14 @@
     state.a2Work = n; update();
   });
 
-  function setCam(v) { state.a2Camera = v; update(); }
+  function setCam(v) {
+    state.a2Camera = v;
+    if (v === "webcam" || v === "dslr") {
+      state.a2Stativ = true; state.a2Lighting = true;
+      el.a2Stativ.checked = true; el.a2Lighting.checked = true;
+    }
+    update();
+  }
 
   // Auswahl 3
   function setA3(v) {
@@ -734,6 +754,7 @@
   el.optTagAnalyzer.addEventListener("change", e => { state.opt.tag = e.target.checked; el.optTagAnalyzerDescRow.style.display = e.target.checked ? "block":"none"; update(); });
   el.optTagAnalyzerDesc.addEventListener("input", e => { state.opt.tagDesc = e.target.value; update(); });
   el.notes.addEventListener("input", e => { state.notes = e.target.value; update(); });
+  el.a2Stativ.addEventListener("change", e => { state.a2Stativ = e.target.checked; update(); });
   el.a2Lighting.addEventListener("change", e => { state.a2Lighting = e.target.checked; update(); });
   el.ribbonColor.addEventListener("change", () => { state.a3Ribbon = "color"; state.qtyRibbonDirB = null; update(); });
   el.ribbonBlack.addEventListener("change", () => { state.a3Ribbon = "black"; state.qtyRibbonDirC = null; update(); });
@@ -826,13 +847,15 @@
     const wp = Math.max(0, state.a1Work||0);
     const aw = Math.max(0, state.a2Work||0);
 
-    // A1 – IDfunction print immer, Encode-Module wenn Codierung
+    // A1 – PRO bei Codierung, PRINT bei Nur Druck; Encode-Module wenn Codierung
     if (state.a1Variant) {
-      items.push(Object.assign({}, P.PRINT, { qty: wp }));
       if (/codierung/.test(state.a1Variant)) {
+        items.push(Object.assign({}, P.PRO, { qty: wp }));
         if (state.tech.legic)    items.push(Object.assign({}, P.T_LEGIC,   { qty: wp }));
         if (state.tech.classic)  items.push(Object.assign({}, P.T_CLASSIC, { qty: wp }));
         if (state.tech.desfire)  items.push(Object.assign({}, P.T_DESFIRE, { qty: wp }));
+      } else {
+        items.push(Object.assign({}, P.PRINT, { qty: wp }));
       }
     }
 
@@ -846,12 +869,10 @@
         items.push(Object.assign({}, P.NETZTEIL,   { qty: aw }));
         items.push(Object.assign({}, P.USB_KABEL,  { qty: aw }));
       }
-      // Stativ (editierbar, löschbar)
-      if (state.a2Camera === "dslr" || state.a2Camera === "webcam") {
-        if (!state.qtyStativDel) {
-          const qStativ = state.qtyStativ !== null ? state.qtyStativ : aw;
-          items.push(Object.assign({}, P.STATIV, { qty: qStativ, editable: true, stateKey: "qtyStativ", deletable: true, deleteKey: "qtyStativDel" }));
-        }
+      // Stativ (per Checkbox gesteuert, editierbar)
+      if (state.a2Stativ) {
+        const qStativ = state.qtyStativ !== null ? state.qtyStativ : aw;
+        items.push(Object.assign({}, P.STATIV, { qty: qStativ, editable: true, stateKey: "qtyStativ" }));
       }
       if (state.a2Lighting) {
         const qLed = state.qtyLed !== null ? state.qtyLed : aw;
@@ -909,6 +930,10 @@
     if (state.opt.supplies) items.push({ name: "Option: Verbrauchsmaterial für Drucker (Anfrage)", qty: 1, note: (state.opt.suppliesDesc||"").trim() || "Bitte Bedarf an sales@evolutionid.com senden." });
     if (state.opt.accessories) items.push({ name: "Option: Zubehör (Hüllen, Jojos, etc.) (Anfrage)", qty: 1, note: (state.opt.accessoriesDesc||"").trim() || "Bitte Bedarf an sales@evolutionid.com senden." });
     if (state.opt.tag) items.push({ name: "Option: evolutionID TagAnalyzer (Anfrage)", qty: 1, note: (state.opt.tagDesc||"").trim() || "Infos unter www.evolutionid.com oder sales@evolutionid.com." });
+
+    // Blank PVC Cards (immer)
+    const qMed = state.qtyMed !== null ? state.qtyMed : 1;
+    items.push(Object.assign({}, P.MED, { qty: qMed, editable: true, stateKey: "qtyMed" }));
 
     // Projektmanagement
     const pmDays = calcPmDays();
