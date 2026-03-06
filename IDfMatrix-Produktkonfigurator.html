@@ -252,7 +252,7 @@
 
         <!-- Codiereinheit -->
         <div id="a3CodeReaderCard" class="card" style="display:none;">
-          <div class="card-head"><div class="dot"></div><div class="title">Codiereinheit</div><span class="chevron">▾</span></div>
+          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 4 – Codiermodul</div><span class="chevron">▾</span></div>
           <div class="card-body">
             <div id="a3CodeReaderOptions" class="row row-2"></div>
             <div id="a3NeedContactCoding" class="hint" style="display:none; margin-top:8px;">Bei <b>Kein Drucker</b> und Codierung: <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a> kontaktieren.</div>
@@ -261,7 +261,7 @@
 
         <!-- Auswahl 4 -->
         <div class="card">
-          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 4 – Optionale Module</div><span class="chevron">▾</span></div>
+          <div class="card-head"><div class="dot"></div><div class="title">Auswahl 5 – Optionale Module</div><span class="chevron">▾</span></div>
           <div class="card-body">
             <label class="check-card" style="display:flex; gap:10px; align-items:flex-start;">
               <input id="optCustom" type="checkbox" />
@@ -278,8 +278,8 @@
             <label class="check-card" style="display:flex; gap:10px; align-items:flex-start;">
               <input id="optSupplies" type="checkbox" />
               <div>
-                <div class="label">Verbrauchsmaterial für Drucker</div>
-                <div class="muted">Farbband, Reinigung, etc. – bitte Bedarf an <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a> senden.</div>
+                <div class="label">Spezialanforderung Drucker</div>
+                <div class="muted">UV-Folie, Laminat oder besondere Anforderungen – bitte Bedarf an <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a> senden.</div>
               </div>
             </label>
             <div id="optSuppliesDescRow" class="row" style="display:none; margin:8px 0 12px 28px;">
@@ -597,29 +597,32 @@
     if (item.note) { const note = document.createElement("div"); note.className="muted"; note.style.whiteSpace="pre-wrap"; note.style.marginTop="4px"; note.textContent = item.note; left.appendChild(note); }
     const right = document.createElement("div"); right.style.textAlign="right"; right.style.flexShrink="0";
     const qtyLabel = item.isPmDays ? "Tage" : "Menge";
+    if (item.price != null) {
+      const total = item.price * item.qty;
+      right.innerHTML = '<span class="muted" style="font-size:12px;">'+fmt(item.price)+' x '+item.qty+'<br>= <b>'+fmt(total)+'</b></span>';
+    }
+    top.appendChild(left); top.appendChild(right);
+    box.appendChild(top);
     if (item.editable && item.stateKey) {
       const inp = document.createElement("input");
-      inp.type="number"; inp.className="qty-edit"; inp.min="1"; inp.value=item.qty;
+      inp.type="number"; inp.min="1"; inp.value=item.qty; inp.style.cssText="max-width:80px; margin:4px 0 0;";
       inp.addEventListener("change", e => {
         const v = Math.max(1, parseInt(e.target.value||'1',10));
         state[item.stateKey] = v; e.target.value = v; update();
       });
-      const qtyRow = document.createElement("div"); qtyRow.style.cssText="display:flex;align-items:center;gap:4px;justify-content:flex-end;white-space:nowrap;";
-      qtyRow.appendChild(document.createTextNode(qtyLabel+": "));
-      qtyRow.appendChild(inp);
-      right.appendChild(qtyRow);
-      if (item.price != null) {
-        const total = item.price * item.qty;
-        const priceEl = document.createElement("div"); priceEl.className="muted"; priceEl.style.fontSize="12px"; priceEl.style.marginTop="2px";
-        priceEl.innerHTML = fmt(item.price)+' x '+item.qty+'<br>= <b>'+fmt(total)+'</b>';
-        right.appendChild(priceEl);
-      }
+      const qtyRow = document.createElement("div"); qtyRow.style.cssText="display:flex;align-items:center;gap:8px;margin-top:8px;";
+      const qtyLbl = document.createElement("div"); qtyLbl.className="label"; qtyLbl.style.cssText="margin:0;white-space:nowrap;font-size:13px;";
+      qtyLbl.textContent = qtyLabel+":";
+      qtyRow.appendChild(qtyLbl); qtyRow.appendChild(inp);
       if (item.deletable && item.deleteKey) {
-        const del = document.createElement("button"); del.className="cart-item-del"; del.textContent="✕ entfernen";
+        const del = document.createElement("button"); del.className="cart-item-del"; del.style.marginLeft="8px"; del.textContent="✕ entfernen";
         del.addEventListener("click", () => { state[item.deleteKey] = true; update(); });
-        right.appendChild(del);
+        qtyRow.appendChild(del);
       }
-    } else {
+      box.appendChild(qtyRow);
+      // skip the default top append below
+      container.appendChild(box); return;
+    } else if (!item.editable) {
       right.innerHTML = qtyLabel+': <b>'+item.qty+'</b>';
       if (item.price != null) {
         const total = item.price * item.qty;
@@ -910,6 +913,9 @@
     // Projektmanagement
     const pmDays = calcPmDays();
     items.push(Object.assign({}, P.PM, { qty: pmDays, isPmDays: true }));
+    if (/codierung/.test(state.a1Variant)) {
+      items.push(Object.assign({}, P.PM, { qty: 2, isPmDays: true, note: "Abklärung, Erstellung und Test der Codierung" }));
+    }
 
     return items;
   }
