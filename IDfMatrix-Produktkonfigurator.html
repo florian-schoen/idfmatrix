@@ -80,7 +80,7 @@
   <div class="container">
     <header class="page">
       <h1 style="color: var(--brand-primary);">IDfunction Matrix Ausweiserstellung - Produktkonfigurator</h1>
-      <div class="sub">powered by © evolutionID 2026 <span style="font-size:11px;color:#aaa;">v2.1</span></div>
+      <div class="sub">powered by © evolutionID 2026 <span style="font-size:11px;color:#aaa;">v2.2</span></div>
     </header>
 
     <div class="grid">
@@ -547,6 +547,18 @@
     SUP_IDIMAGE: { sku: "SUP1001084", price: 90.30, name: "SW-Maintenance IDimage" },
     SUP_KI:      { sku: "SUP1001085", price: 45.15, name: "SW-Maintenance IDimage KI" },
   };
+
+  // Apply admin overrides (injected by middleware from KV)
+  if (window.ARTICLE_OVERRIDES) {
+    Object.values(P).forEach(function(p) {
+      var ov = window.ARTICLE_OVERRIDES[p.sku];
+      if (ov) {
+        if (ov.name  !== undefined) p.name  = ov.name;
+        if (ov.price !== undefined) p.price = ov.price;
+        if (ov.sku   !== undefined) p.sku   = ov.sku;
+      }
+    });
+  }
 
   // ---------- Elements ----------
   const el = {

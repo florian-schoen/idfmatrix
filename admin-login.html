@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login – IDfMatrix Konfigurator</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6fa; display: flex; align-items: center; justify-content: center; min-height: 100vh; color: #1a1a2e; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,.10); padding: 40px 36px; width: 100%; max-width: 380px; }
+  .logo { font-size: 20px; font-weight: 700; color: #1a3a6e; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 28px; }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #444; }
+  input[type="password"] { width: 100%; padding: 10px 14px; border: 1.5px solid #dde1ea; border-radius: 8px; font-size: 15px; outline: none; transition: border-color .15s; }
+  input[type="password"]:focus { border-color: #1a3a6e; }
+  button { margin-top: 18px; width: 100%; padding: 11px; background: #1a3a6e; color: #fff; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background .15s; }
+  button:hover { background: #163060; }
+  .error { margin-top: 14px; padding: 10px 14px; background: #fff3f3; border: 1px solid #f5c6c6; border-radius: 8px; color: #c0392b; font-size: 13px; display: none; }
+  .error.show { display: block; }
+  .back { display: block; margin-top: 14px; text-align: center; font-size: 13px; color: #888; text-decoration: none; }
+  .back:hover { color: #1a3a6e; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">IDfMatrix Admin</div>
+  <div class="subtitle">Verwaltungskonsole – Zugang</div>
+  <form method="POST" action="/admin-login">
+    <label for="pw">Admin-Passwort</label>
+    <input type="password" id="pw" name="password" autofocus autocomplete="current-password" />
+    <button type="submit">Anmelden</button>
+    <div class="error" id="err">Falsches Passwort. Bitte erneut versuchen.</div>
+  </form>
+  <a class="back" href="/login.html">← Zurück zur Partnerseite</a>
+</div>
+<script>
+  if (location.search.includes('error=1')) document.getElementById('err').classList.add('show');
+</script>
+</body>
+</html>

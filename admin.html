@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin – IDfMatrix Konfigurator</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f6fa; color: #1a1a2e; padding: 32px 20px; }
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+  .logo { font-size: 22px; font-weight: 700; color: #1a3a6e; }
+  .subtitle { font-size: 13px; color: #888; margin-top: 2px; }
+  .logout { font-size: 13px; color: #888; text-decoration: none; border: 1px solid #dde1ea; padding: 6px 14px; border-radius: 8px; }
+  .logout:hover { background: #f0f2f7; }
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08); padding: 24px; max-width: 1100px; margin: 0 auto; }
+  .section-title { font-size: 16px; font-weight: 700; color: #1a3a6e; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #eef2ff; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; padding: 8px 12px; font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e5e7eb; }
+  td { padding: 6px 8px; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+  tr:hover td { background: #fafbff; }
+  input.field { width: 100%; border: 1.5px solid #e5e7eb; border-radius: 6px; padding: 5px 8px; font-size: 13px; color: #111827; background: #fafafa; transition: border-color .15s; }
+  input.field:focus { outline: none; border-color: #335579; background: #fff; }
+  input.price { text-align: right; max-width: 100px; }
+  input.sku { max-width: 140px; font-family: monospace; font-size: 12px; }
+  .group-label { font-size: 11px; font-weight: 700; color: #fff; background: #335579; padding: 3px 10px; border-radius: 4px; margin: 14px 0 6px; display: inline-block; }
+  .actions { display: flex; gap: 10px; margin-top: 20px; align-items: center; }
+  .btn-save { padding: 10px 28px; background: #335579; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background .15s; }
+  .btn-save:hover { background: #1a3a6e; }
+  .btn-reset { padding: 10px 20px; background: #fff; color: #6b7280; border: 1.5px solid #dde1ea; border-radius: 8px; font-size: 14px; cursor: pointer; }
+  .btn-reset:hover { background: #f5f6fa; }
+  .status { font-size: 13px; padding: 8px 14px; border-radius: 8px; display: none; }
+  .status.ok { display: inline-block; background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+  .status.err { display: inline-block; background: #fff3f3; border: 1px solid #f5c6c6; color: #c0392b; }
+  .muted { color: #9ca3af; font-size: 12px; }
+  .note { margin-top: 16px; padding: 10px 14px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; font-size: 13px; color: #1e40af; }
+</style>
+</head>
+<body>
+
+<div style="max-width:1100px; margin:0 auto;">
+  <div class="header">
+    <div>
+      <div class="logo">IDfMatrix Admin</div>
+      <div class="subtitle">Artikelverwaltung – Preise, Bezeichnungen & Art.-Nr.</div>
+    </div>
+    <a class="logout" href="/admin-logout">Abmelden</a>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Artikelliste</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:35%">Bezeichnung</th>
+          <th style="width:20%">Art.-Nr.</th>
+          <th style="width:15%">Preis (€)</th>
+          <th style="width:30%">Info</th>
+        </tr>
+      </thead>
+      <tbody id="articleTable"></tbody>
+    </table>
+
+    <div class="actions">
+      <button class="btn-save" onclick="saveArticles()">Änderungen speichern</button>
+      <button class="btn-reset" onclick="resetToDefaults()">Standardwerte wiederherstellen</button>
+      <span class="status" id="status"></span>
+    </div>
+
+    <div class="note">
+      <b>Hinweis:</b> Änderungen sind sofort auf der Konfiguratorseite aktiv – kein Rebuild erforderlich.
+      Maintenance-Preise werden separat gepflegt (sind i.d.R. 21 % des Basisartikels pro Jahr).
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULTS = [
+  // Software
+  { group: 'Software – IDfunction', sku: 'IDF1001211', name: 'IDfunction print',                          price: 870.00,   info: 'Basis-Lizenz Ausweiserstellung' },
+  { group: 'Software – IDfunction', sku: 'IDF1001201', name: 'IDfunction Professional',                   price: 2327.61,  info: 'Pro-Lizenz' },
+  { group: 'Software – IDfunction', sku: 'IDF1001206', name: 'IDfunction Encode LEGIC® advant',           price: 1484.55,  info: 'Codier-Modul LEGIC' },
+  { group: 'Software – IDfunction', sku: 'IDF1001204', name: 'IDfunction Encode MIFARE® Classic',         price: 913.42,   info: 'Codier-Modul MIFARE Classic' },
+  { group: 'Software – IDfunction', sku: 'IDF1001205', name: 'IDfunction Encode DESFire EV1 (*EV2/EV3)',  price: 2357.68,  info: 'Codier-Modul DESFire' },
+  { group: 'Software – IDimage',    sku: 'IDF2001226', name: 'IDimage Bilderfassungssoftware',            price: 430.00,   info: 'Bilderfassung' },
+  { group: 'Software – IDimage',    sku: 'IDF2001227', name: 'IDimage acquisition KI-Option',             price: 215.00,   info: 'KI-Zusatzmodul' },
+  // SW-Maintenance
+  { group: 'SW-Maintenance',        sku: 'SUP1001048', name: 'SW-Maintenance IDfunction print',           price: 182.70,   info: '21 % von IDF1001211 / Jahr' },
+  { group: 'SW-Maintenance',        sku: 'SUP1001046', name: 'SW-Maintenance IDfunction Professional',    price: 488.80,   info: '21 % von IDF1001201 / Jahr' },
+  { group: 'SW-Maintenance',        sku: 'SUP1001052', name: 'SW-Maintenance IDfunction Legic',           price: 311.76,   info: '21 % von IDF1001206 / Jahr' },
+  { group: 'SW-Maintenance',        sku: 'SUP1001050', name: 'SW-Maintenance IDfunction MIFARE',          price: 191.82,   info: '21 % von IDF1001204 / Jahr' },
+  { group: 'SW-Maintenance',        sku: 'SUP1001051', name: 'SW-Maintenance IDfunction DESFire',         price: 495.11,   info: '21 % von IDF1001205 / Jahr' },
+  { group: 'SW-Maintenance',        sku: 'SUP1001084', name: 'SW-Maintenance IDimage',                    price: 90.30,    info: '21 % von IDF2001226 / Jahr' },
+  { group: 'SW-Maintenance',        sku: 'SUP1001085', name: 'SW-Maintenance IDimage KI',                 price: 45.15,    info: '21 % von IDF2001227 / Jahr' },
+  // Drucker Retransfer
+  { group: 'Drucker – Retransfer',  sku: 'MAT4001007', name: 'MATICA XID8600 Dual Side',                 price: 3116.61,  info: 'Retransfer-Drucker' },
+  { group: 'Drucker – Retransfer',  sku: 'MAT4001004', name: 'MATICA XID8300/XID8600 Kodiereinheit',     price: 698.40,   info: 'Encode-Modul für Retransfer' },
+  { group: 'Drucker – Retransfer',  sku: 'MAT4001013', name: 'MATICA Edisec XID8300/8600 Bend Remedy',   price: 236.00,   info: '' },
+  { group: 'Drucker – Retransfer',  sku: 'MAT4001010', name: 'MATICA XID8300/XID8600 Farbband Platinum', price: 182.00,   info: 'Verbrauchsmaterial' },
+  { group: 'Drucker – Retransfer',  sku: 'MAT4001011', name: 'MATICA XID8300/XID8600 Retransf Platinum', price: 69.90,    info: 'Verbrauchsmaterial' },
+  { group: 'Drucker – Retransfer',  sku: 'MAT4001021', name: 'MATICA Cleaning Kit for XID Printer',      price: 58.20,    info: 'Reinigungskit' },
+  // Drucker Direkt
+  { group: 'Drucker – Direktdruck', sku: 'MAT4001000', name: 'Matica MC310 Dual Side Direktdrucker',     price: 1392.00,  info: 'Direktdrucker' },
+  { group: 'Drucker – Direktdruck', sku: 'MAT4001014', name: 'Kodiereinheit MATICA MC110/MC210/MC310',   price: 698.40,   info: 'Encode-Modul für Direktdruck' },
+  { group: 'Drucker – Direktdruck', sku: 'MAT4001001', name: 'Matica MC310 Farbband YMCKO (Platinum)',   price: 66.23,    info: 'Verbrauchsmaterial Farbe' },
+  { group: 'Drucker – Direktdruck', sku: 'MAT4001002', name: 'Matica MC310 Farbband Schwarz-2000 Print', price: 33.00,    info: 'Verbrauchsmaterial Schwarz' },
+  { group: 'Drucker – Direktdruck', sku: 'MAT4001003', name: 'Cleaning kit for MC DTC series',           price: 26.54,    info: 'Reinigungskit' },
+  // Kamera & Zubehör
+  { group: 'Kamera & Zubehör',      sku: 'CAN4005018', name: 'Webcam, HD-Video 1080p, 60 FPS, HDR',      price: 245.00,   info: '' },
+  { group: 'Kamera & Zubehör',      sku: 'CAN4005013', name: 'Canon Spiegelreflex-Kamera 2000D',         price: 749.00,   info: '' },
+  { group: 'Kamera & Zubehör',      sku: 'CAN4005015', name: 'Tripod-Stativ für SLR & Webcam',           price: 111.20,   info: '' },
+  { group: 'Kamera & Zubehör',      sku: 'CAN4005014', name: 'Externes Netzteil Canon SLR Kameras',      price: 73.75,    info: '' },
+  { group: 'Kamera & Zubehör',      sku: 'CAB1001011', name: '3m USB-Kabel zu Mini-USB',                 price: 16.90,    info: '' },
+  { group: 'Kamera & Zubehör',      sku: 'CAN4005019', name: 'LED Videobeleuchtung',                     price: 309.00,   info: '' },
+  // Sonstiges
+  { group: 'Sonstiges',             sku: 'DLP1005012', name: 'Projektmanagement Tagessatz',               price: 1340.00,  info: 'Dienstleistung' },
+  { group: 'Sonstiges',             sku: 'TOM1002895', name: 'TWN4 MultiTech LEGIC 45 DT-U20-b',         price: 215.82,   info: 'USB-Tischleser' },
+  { group: 'Sonstiges',             sku: 'MED1002019', name: 'Blank PVC Cards',                           price: 0.36,     info: 'pro Stück' },
+];
+
+let overrides = {};
+
+function fmt(n) { return parseFloat(n).toFixed(2); }
+
+function buildTable(data) {
+  const tbody = document.getElementById('articleTable');
+  tbody.innerHTML = '';
+  let lastGroup = '';
+  DEFAULTS.forEach(def => {
+    const ov = data[def.sku] || {};
+    if (def.group !== lastGroup) {
+      lastGroup = def.group;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td colspan="4" style="padding:12px 8px 4px;"><span class="group-label">${def.group}</span></td>`;
+      tbody.appendChild(tr);
+    }
+    const name  = ov.name  !== undefined ? ov.name  : def.name;
+    const sku   = ov.sku   !== undefined ? ov.sku   : def.sku;
+    const price = ov.price !== undefined ? ov.price : def.price;
+    const changed = ov.name !== undefined || ov.sku !== undefined || ov.price !== undefined;
+    const tr = document.createElement('tr');
+    tr.dataset.defaultSku = def.sku;
+    tr.innerHTML = `
+      <td><input class="field" data-field="name"  value="${escHtml(name)}"  placeholder="${escHtml(def.name)}"></td>
+      <td><input class="field sku" data-field="sku" value="${escHtml(sku)}" placeholder="${escHtml(def.sku)}"></td>
+      <td><input class="field price" data-field="price" type="number" step="0.01" min="0" value="${fmt(price)}" placeholder="${fmt(def.price)}"></td>
+      <td><span class="muted">${escHtml(def.info)}</span>${changed ? ' <span style="color:#335579;font-size:11px;font-weight:600;">geändert</span>' : ''}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function gatherData() {
+  const result = {};
+  document.querySelectorAll('#articleTable tr[data-default-sku]').forEach(tr => {
+    const defaultSku = tr.dataset.defaultSku;
+    const def = DEFAULTS.find(d => d.sku === defaultSku);
+    const name  = tr.querySelector('[data-field="name"]').value.trim();
+    const sku   = tr.querySelector('[data-field="sku"]').value.trim();
+    const price = parseFloat(tr.querySelector('[data-field="price"]').value);
+    const ov = {};
+    if (name  !== def.name)  ov.name  = name;
+    if (sku   !== def.sku)   ov.sku   = sku;
+    if (!isNaN(price) && Math.abs(price - def.price) > 0.001) ov.price = price;
+    if (Object.keys(ov).length > 0) result[defaultSku] = ov;
+  });
+  return result;
+}
+
+async function saveArticles() {
+  const data = gatherData();
+  const btn = document.querySelector('.btn-save');
+  btn.disabled = true; btn.textContent = 'Speichert…';
+  try {
+    const res = await fetch('/api/articles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      overrides = data;
+      showStatus('Gespeichert! Änderungen sind sofort live.', 'ok');
+      buildTable(overrides);
+    } else {
+      showStatus('Fehler beim Speichern (HTTP ' + res.status + ')', 'err');
+    }
+  } catch(e) {
+    showStatus('Netzwerkfehler: ' + e.message, 'err');
+  }
+  btn.disabled = false; btn.textContent = 'Änderungen speichern';
+}
+
+async function resetToDefaults() {
+  if (!confirm('Alle Änderungen zurücksetzen auf Standardwerte?')) return;
+  const btn = document.querySelector('.btn-reset');
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/articles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
+    });
+    if (res.ok) {
+      overrides = {};
+      showStatus('Standardwerte wiederhergestellt.', 'ok');
+      buildTable({});
+    } else {
+      showStatus('Fehler (HTTP ' + res.status + ')', 'err');
+    }
+  } catch(e) {
+    showStatus('Netzwerkfehler: ' + e.message, 'err');
+  }
+  btn.disabled = false;
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status ' + type;
+  setTimeout(() => { el.className = 'status'; }, 4000);
+}
+
+function escHtml(s) { return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// Init: load current overrides from KV
+(async () => {
+  try {
+    const res = await fetch('/api/articles');
+    if (res.ok) {
+      overrides = await res.json();
+    }
+  } catch(_) {}
+  buildTable(overrides);
+})();
+</script>
+</body>
+</html>
