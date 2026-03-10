@@ -112,7 +112,7 @@ function renderMaint() {
     el.maintItems.appendChild(box);
   });
   const total = items.reduce((s, it) => s + (it.price != null ? it.price * it.qty : 0), 0);
-  if (total > 0) el.maintTotal.innerHTML = '<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid var(--border);margin-top:8px;"><b>Gesamt</b><b>' + fmt(total) + '</b></div>';
+  if (total > 0) el.maintTotal.innerHTML = '<div style="display:flex;justify-content:space-between;padding:10px 0;border-top:2px solid var(--border);margin-top:8px;"><b>Gesamtpreis <span style="color:var(--muted);font-weight:400;font-size:12px;">(Netto)</span></b><b>' + fmt(total) + '</b></div>';
   else el.maintTotal.innerHTML = '<div class="muted" style="font-size:12px;margin-top:8px;">Preise werden separat kommuniziert.</div>';
 }
 
