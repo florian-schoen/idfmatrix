@@ -41,6 +41,7 @@ app.use('/api/articles', (req, res, next) => {
 app.use('/api/send-email', requireSiteAuth, emailRouter);
 
 // ---------- Admin-Bereich ----------
+app.get('/admin',      requireAdminAuth, (req, res) => res.sendFile(path.join(PUBLIC, 'admin.html')));
 app.get('/admin.html', requireAdminAuth, (req, res) => res.sendFile(path.join(PUBLIC, 'admin.html')));
 
 // ---------- Konfigurator (Site-Auth) ----------
