@@ -124,7 +124,7 @@ function renderCart() {
   el.cartCount.textContent = items.length + " Positionen";
 
   const totalPrice = items.reduce((sum, it) => sum + (it.price != null ? it.price * it.qty : 0), 0);
-  if (el.cartTotal) el.cartTotal.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:2px solid var(--border);margin-top:8px;"><b>Gesamtpreis</b><b>'+fmt(totalPrice)+'</b></div>';
+  if (el.cartTotal) el.cartTotal.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:2px solid var(--border);margin-top:8px;"><b>Gesamtpreis <span style=\"color:var(--muted);font-weight:400;font-size:12px;\">(Netto)</span></b><b>'+fmt(totalPrice)+'</b></div>';
 
   // Kundendaten-Box
   const parts = [];

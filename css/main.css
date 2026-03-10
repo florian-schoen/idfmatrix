@@ -44,8 +44,10 @@ input[type="number"], input[type="text"], input[type="email"], input[type="tel"]
 .kv .v { width:58%; font-weight:600; }
 .btn { appearance:none; border:1px solid var(--border); background:#fff; padding:10px 14px; border-radius:12px; font-size:14px; cursor:pointer; }
 .btn:hover { background:#f9fafb; }
-.btn-primary { background: var(--brand-primary); border-color: var(--brand-primary); color:#fff; }
-.btn-primary[disabled] { opacity:.55; cursor:not-allowed; }
+.btn-primary { background: var(--brand-accent); border-color: var(--brand-accent); color:#fff; font-size:16px; font-weight:700; padding:14px 20px; border-radius:14px; box-shadow: 0 4px 14px rgba(124,156,42,.35); letter-spacing:.3px; transition: background .15s, box-shadow .15s, transform .1s; }
+.btn-primary:hover:not([disabled]) { background: #6a8623; box-shadow: 0 6px 20px rgba(124,156,42,.45); transform: translateY(-1px); }
+.btn-primary:active:not([disabled]) { transform: translateY(0); box-shadow: 0 2px 8px rgba(124,156,42,.3); }
+.btn-primary[disabled] { opacity:.45; cursor:not-allowed; box-shadow:none; }
 .badge { font-size: 11px; padding: 3px 8px; background:#eef2ff; color: var(--brand-primary); border-radius: 999px; border:1px solid var(--border); }
 details.info { border:1px solid var(--border); border-radius:12px; padding:10px 12px; }
 details.info > summary { cursor:pointer; font-weight:600; list-style:none; }
