@@ -136,6 +136,11 @@
             <div id="a1UsbHint" class="hint" style="display:none; margin-top:6px;">
               <b>Hinweis:</b> Bei <b>Druck &amp; Codierung</b> muss der Drucker per <b>USB</b> mit dem PC verbunden werden.
             </div>
+            <div id="a1LettershopRow" style="display:none; margin-top:8px;">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;">
+                <input id="a1Lettershop" type="checkbox" checked/> IDfunction Lettershop hinzufügen (IDF1001209, 990,00 €/Stk.)
+              </label>
+            </div>
 
             <div id="techBlock" style="display:none; margin-top:12px;">
               <div class="label">Welche Ausweistechnologie wird verwendet? (Mehrfachauswahl möglich)</div>
@@ -422,6 +427,7 @@
     a3Printer: "", a3CodeReader: "", a3Ribbon: "color",
     // a2 extra
     a2Lighting: false, qtyLed: null, a2Stativ: false,
+    a1Lettershop: true,
     // cart qty overrides (null = auto)
     qtyPrnRet: null, qtyPrnDir: null, qtyStativ: null, qtyMed: null,
     qtyRibbonRetC: null, qtyRetransfPlat: null, qtyCleanRet: null,
@@ -546,6 +552,10 @@
     SUP_LEGIC:   { sku: "SUP1001052", price: 311.76, name: "SW-Maintenance IDfunction Legic" },
     SUP_IDIMAGE: { sku: "SUP1001084", price: 90.30, name: "SW-Maintenance IDimage" },
     SUP_KI:      { sku: "SUP1001085", price: 45.15, name: "SW-Maintenance IDimage KI" },
+    // Lettershop
+    CAB_USB_EXT:  { sku: "CAB1001012", price: 23.90, name: "3m USB-Kabel Verlängerung" },
+    LETTERSHOP:   { sku: "IDF1001209", price: 990.00, name: "IDfunction Lettershop" },
+    SUP_LETTERSHOP: { sku: "SUP1001055", name: "SW-Maintenance IDfunction Lettershop" },
   };
 
   // Load admin price overrides from API
@@ -582,6 +592,8 @@
     a1Work: document.getElementById("a1Work"),
     a1CodingHint: document.getElementById("a1CodingHint"),
     a1UsbHint: document.getElementById("a1UsbHint"),
+    a1LettershopRow: document.getElementById("a1LettershopRow"),
+    a1Lettershop: document.getElementById("a1Lettershop"),
     techBlock: document.getElementById("techBlock"),
     techCards: document.getElementById("techCards"),
     techWarn: document.getElementById("techWarn"),
@@ -831,6 +843,7 @@
   el.optTagAnalyzer.addEventListener("change", e => { state.opt.tag = e.target.checked; el.optTagAnalyzerDescRow.style.display = e.target.checked ? "block":"none"; update(); });
   el.optTagAnalyzerDesc.addEventListener("input", e => { state.opt.tagDesc = e.target.value; update(); });
   el.notes.addEventListener("input", e => { state.notes = e.target.value; update(); });
+  el.a1Lettershop.addEventListener("change", e => { state.a1Lettershop = e.target.checked; update(); });
   function setA5(v) { state.a5Umsetzung = v; update(); }
 
   // Maintenance Laufzeit
@@ -862,6 +875,10 @@
     el.a1Options.className = "row row-3" + (!state.a1Variant ? " danger-ring" : "");
     radioCards(el.a1Options, "a1", A1, state.a1Variant, setA1);
     el.a1UsbHint.style.display = state.a1Variant === "druck_codierung" ? "block":"none";
+    // Lettershop checkbox: nur bei Codierungs-Variante sichtbar
+    const hasPro = /codierung/.test(state.a1Variant);
+    el.a1LettershopRow.style.display = hasPro ? "block" : "none";
+    el.a1Lettershop.checked = state.a1Lettershop;
     // show tech block if coding variant
     const needsTech = /codierung/.test(state.a1Variant);
     el.techBlock.style.display = needsTech ? "block":"none";
@@ -1021,6 +1038,26 @@
     if (state.opt.supplies) items.push({ name: "Option: Verbrauchsmaterial für Drucker (Anfrage)", qty: 1, note: (state.opt.suppliesDesc||"").trim() || "Bitte Bedarf an sales@evolutionid.com senden." });
     if (state.opt.accessories) items.push({ name: "Option: Zubehör (Hüllen, Jojos, etc.) (Anfrage)", qty: 1, note: (state.opt.accessoriesDesc||"").trim() || "Bitte Bedarf an sales@evolutionid.com senden." });
     if (state.opt.tag) items.push({ name: "Option: evolutionID TagAnalyzer (Anfrage)", qty: 1, note: (state.opt.tagDesc||"").trim() || "Infos unter www.evolutionid.com oder sales@evolutionid.com." });
+
+    // Automatische Zusatzartikel
+    // CAN4005018 (Webcam) → CAB1001012 (USB-Kabel Verlängerung), gleiche Anzahl
+    const camUsbItem = items.find(it => it.sku === "CAN4005018");
+    if (camUsbItem) {
+      items.push(Object.assign({}, P.CAB_USB_EXT, { qty: camUsbItem.qty }));
+    }
+    // IDF1001201 (PRO) → IDF1001209 (Lettershop), gleiche Anzahl, per Checkbox steuerbar
+    const proItem = items.find(it => it.sku === "IDF1001201");
+    if (proItem && state.a1Lettershop) {
+      items.push(Object.assign({}, P.LETTERSHOP, { qty: proItem.qty }));
+    }
+    // IDF1001209 (Lettershop) → SUP1001055 (Maintenance), qty*3, Preis = 0,21 * Lettershop-Preis
+    const lettershopItem = items.find(it => it.sku === "IDF1001209");
+    if (lettershopItem) {
+      items.push(Object.assign({}, P.SUP_LETTERSHOP, {
+        qty: lettershopItem.qty * 3,
+        price: Math.round(lettershopItem.price * 0.21 * 100) / 100,
+      }));
+    }
 
     // Blank PVC Cards (immer)
     const qMed = state.qtyMed !== null ? state.qtyMed : 50;
