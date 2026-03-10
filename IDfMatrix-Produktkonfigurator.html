@@ -576,6 +576,8 @@
       }
     });
   }
+  // SUP_LETTERSHOP Preis dynamisch aus Lettershop-Preis ableiten
+  P.SUP_LETTERSHOP.price = Math.round(P.LETTERSHOP.price * 0.21 * 100) / 100;
 
   // ---------- Elements ----------
   const el = {
@@ -1050,15 +1052,6 @@
     if (proItem && state.a1Lettershop) {
       items.push(Object.assign({}, P.LETTERSHOP, { qty: proItem.qty }));
     }
-    // IDF1001209 (Lettershop) → SUP1001055 (Maintenance), qty*3, Preis = 0,21 * Lettershop-Preis
-    const lettershopItem = items.find(it => it.sku === "IDF1001209");
-    if (lettershopItem) {
-      items.push(Object.assign({}, P.SUP_LETTERSHOP, {
-        qty: lettershopItem.qty * 3,
-        price: Math.round(lettershopItem.price * 0.21 * 100) / 100,
-      }));
-    }
-
     // Blank PVC Cards (immer)
     const qMed = state.qtyMed !== null ? state.qtyMed : 50;
     items.push(Object.assign({}, P.MED, { qty: qMed, editable: true, stateKey: "qtyMed" }));
@@ -1082,6 +1075,7 @@
     "IDF1001206": P.SUP_LEGIC,
     "IDF2001226": P.SUP_IDIMAGE,
     "IDF2001227": P.SUP_KI,
+    "IDF1001209": P.SUP_LETTERSHOP,
   };
 
   function buildMaintItems() {
