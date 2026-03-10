@@ -212,9 +212,15 @@ function update() {
   // Warenkorb
   renderCart();
 
+  // E-Mail Validierung
+  const emailFilled = state.email && state.email.trim().length > 0;
+  const emailValid  = !emailFilled || isValidEmail(state.email);
+  el.emailWarn.style.display = (emailFilled && !emailValid) ? "block" : "none";
+
   // Status + Button
   el.checkoutBtn.disabled = !isValid();
   el.statusText.textContent = isValid()
-    ? "Konfiguration vollständig. Export möglich."
+    ? "Konfiguration vollständig. Anfrage absenden m\u00f6glich."
+    : (emailFilled && !emailValid) ? "Bitte eine g\u00fcltige E-Mail-Adresse eingeben."
     : (validProject ? "Bitte alle Pflichtauswahlen treffen." : "Bitte Kunden-/Projektnamen eingeben.");
 }

@@ -14,9 +14,10 @@ router.post('/', async (req, res) => {
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
+    const recipients = customerEmail ? [TO_EMAIL, customerEmail] : [TO_EMAIL];
     await resend.emails.send({
       from: FROM_EMAIL,
-      to:   [TO_EMAIL],
+      to:   recipients,
       replyTo: customerEmail || undefined,
       subject: subject || `Neue IDfMatrix Anfrage – ${projectName || 'Konfiguration'}`,
       html: `

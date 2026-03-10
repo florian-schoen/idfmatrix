@@ -27,6 +27,7 @@ const el = {
   nachname: document.getElementById("nachname"),
   vorname: document.getElementById("vorname"),
   email: document.getElementById("email"),
+  emailWarn: document.getElementById("emailWarn"),
   telefon: document.getElementById("telefon"),
   a1Options: document.getElementById("a1Options"),
   a1Work: document.getElementById("a1Work"),
@@ -172,10 +173,35 @@ el.pmDaysInput.addEventListener("input", e => {
 
 function setA5(v) { state.a5Umsetzung = v; update(); }
 
-el.checkoutBtn.addEventListener("click", () => { if (!isValid()) return; exportCSV(); });
+el.checkoutBtn.addEventListener("click", async () => {
+  if (!isValid()) return;
+  el.checkoutBtn.disabled = true;
+  el.checkoutBtn.textContent = 'Wird gesendet…';
+  try {
+    const r = await fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        projectName:   state.projName,
+        customerName:  [state.firstName, state.lastName].filter(Boolean).join(' ') || undefined,
+        customerEmail: state.email || undefined,
+        csvContent:    buildCSV(),
+      }),
+    });
+    if (r.ok) {
+      el.checkoutBtn.textContent = 'Anfrage gesendet ✓';
+    } else {
+      el.checkoutBtn.textContent = 'Fehler – bitte erneut versuchen';
+      el.checkoutBtn.disabled = false;
+    }
+  } catch(_) {
+    el.checkoutBtn.textContent = 'Fehler – bitte erneut versuchen';
+    el.checkoutBtn.disabled = false;
+  }
+});
 
-// ---------- CSV-Export ----------
-function exportCSV() {
+// ---------- CSV-Inhalt aufbauen ----------
+function buildCSV() {
   function csvCell(v) { const s = (v === null || v === undefined) ? "" : String(v); return '"' + s.replace(/"/g, '""') + '"'; }
   function fmtNum(n) { return typeof n === "number" ? n.toFixed(2).replace(".", ",") : ""; }
 
@@ -210,11 +236,7 @@ function exportCSV() {
   const kd = [["Projektname",state.projName],["Vorname",state.firstName],["Nachname",state.lastName],["Firma",state.company],["E-Mail",state.email],["Telefon",state.phone]];
   kd.forEach(([k, v]) => { if (v) rows.push([csvCell(k), csvCell(v)].join(";")); });
 
-  const blob = new Blob(["\uFEFF" + rows.join("\r\n")], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = "idfunction-matrix-konfiguration.csv";
-  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  return rows.join("\r\n");
 }
 
 // ---------- Init (async: Preise laden) ----------

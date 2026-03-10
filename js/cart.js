@@ -10,6 +10,10 @@ function hasTech() {
   return !!(state.tech.legic || state.tech.classic || state.tech.desfire);
 }
 
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 function isValid() {
   if (state.projName.trim() === "") return false;
   if (!state.a1Variant) return false;
@@ -23,6 +27,7 @@ function isValid() {
   if (/codierung/.test(state.a1Variant) && !state.a3CodeReader) return false;
   if (/codierung/.test(state.a1Variant) && !hasTech()) return false;
   if (!state.a5Umsetzung) return false;
+  if (state.email && !isValidEmail(state.email)) return false;
   return true;
 }
 
