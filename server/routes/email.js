@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const { Resend } = require('resend');
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 const TO_EMAIL   = process.env.MAIL_TO   || 'sales@evolutionid.com';
 const FROM_EMAIL = process.env.MAIL_FROM || 'idfmatrix@evolutionid.com';
 
@@ -15,6 +13,7 @@ router.post('/', async (req, res) => {
   const filename = `idfmatrix-${(projectName || 'konfiguration').replace(/[^a-z0-9]/gi, '-').toLowerCase()}.csv`;
 
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: FROM_EMAIL,
       to:   [TO_EMAIL],
