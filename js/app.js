@@ -184,8 +184,11 @@ el.checkoutBtn.addEventListener("click", async () => {
       body: JSON.stringify({
         projectName:   state.projName,
         customerName:  [state.firstName, state.lastName].filter(Boolean).join(' ') || undefined,
-        customerEmail: state.email || undefined,
+        customerEmail: state.email   || undefined,
+        company:       state.company || undefined,
+        phone:         state.phone   || undefined,
         csvContent:    buildCSV(),
+        cartHtml:      buildCartHtml(),
       }),
     });
     if (r.ok) {
@@ -237,6 +240,50 @@ function buildCSV() {
   kd.forEach(([k, v]) => { if (v) rows.push([csvCell(k), csvCell(v)].join(";")); });
 
   return rows.join("\r\n");
+}
+
+// ---------- Warenkorb als HTML für E-Mail ----------
+function buildCartHtml() {
+  function esc(s) { return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function fmtE(n) { return typeof n === 'number' ? n.toLocaleString('de-DE', {style:'currency',currency:'EUR'}) : '–'; }
+  const th = 'style="padding:7px 10px;text-align:left;background:#1a3a6e;color:#fff;"';
+  const thr = 'style="padding:7px 10px;text-align:right;background:#1a3a6e;color:#fff;"';
+  function tableHead() {
+    return `<table style="border-collapse:collapse;width:100%;font-size:13px;margin-bottom:16px;">
+      <thead><tr>
+        <th ${th}>Pos.</th><th ${th}>Art.-Nr.</th><th ${th}>Bezeichnung</th>
+        <th ${thr}>Menge</th><th ${thr}>Einzelpreis</th><th ${thr}>Gesamtpreis</th>
+      </tr></thead><tbody>`;
+  }
+  function tableRow(i, sku, name, qty, price) {
+    const bg = i % 2 === 0 ? '#f4f7ff' : '#ffffff';
+    const td = `style="padding:6px 10px;border-bottom:1px solid #e0e0e0;background:${bg};"`;
+    const tdr = `style="padding:6px 10px;text-align:right;border-bottom:1px solid #e0e0e0;background:${bg};"`;
+    const ep = price != null ? price : 0;
+    return `<tr><td ${td}>${i+1}</td><td ${td}>${esc(sku)}</td><td ${td}>${esc(name)}</td>
+      <td ${tdr}>${qty}</td><td ${tdr}>${price != null ? fmtE(ep) : 'auf Anfrage'}</td>
+      <td ${tdr}>${price != null ? fmtE(ep * qty) : ''}</td></tr>`;
+  }
+  function totalRow(label, val) {
+    return `<tr><td colspan="5" style="padding:7px 10px;text-align:right;font-weight:bold;border-top:2px solid #1a3a6e;background:#eef1fb;">${label}</td>
+      <td style="padding:7px 10px;text-align:right;font-weight:bold;border-top:2px solid #1a3a6e;background:#eef1fb;">${fmtE(val)}</td></tr>`;
+  }
+
+  const items = buildCartItems().filter(it => it.sku);
+  let total = 0;
+  let html = `<h4 style="color:#1a3a6e;margin:0 0 6px;">Warenkorb</h4>` + tableHead();
+  items.forEach((it, i) => { total += (it.price||0) * it.qty; html += tableRow(i, it.sku, it.name, it.qty, it.price); });
+  html += totalRow('Gesamtpreis', total) + '</tbody></table>';
+
+  const maint = buildMaintItems();
+  if (maint.length > 0) {
+    let mTotal = 0;
+    html += `<h4 style="color:#1a3a6e;margin:16px 0 6px;">Softwaremaintenance (${state.maintYears} Jahre)</h4>` + tableHead();
+    maint.forEach((it, i) => { mTotal += (it.price||0) * it.qty; html += tableRow(i, it.sku, it.name, it.qty, it.price); });
+    if (mTotal > 0) html += totalRow('Gesamtpreis Maintenance', mTotal);
+    html += '</tbody></table>';
+  }
+  return html;
 }
 
 // ---------- Init (async: Preise laden) ----------

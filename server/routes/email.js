@@ -5,37 +5,72 @@ const TO_EMAIL   = process.env.MAIL_TO   || 'sales@evolutionid.com';
 const FROM_EMAIL = process.env.MAIL_FROM || 'idfmatrix@evolutionid.com';
 
 // POST /api/send-email
-// Body: { subject, csvContent, customerName, customerEmail, projectName }
+// Body: { csvContent, cartHtml, customerName, customerEmail, projectName, company, phone }
 router.post('/', async (req, res) => {
-  const { subject, csvContent, customerName, customerEmail, projectName } = req.body;
+  const { csvContent, cartHtml, customerName, customerEmail, projectName, company, phone } = req.body;
   if (!csvContent) return res.status(400).json({ error: 'Kein CSV-Inhalt' });
 
   const filename = `idfmatrix-${(projectName || 'konfiguration').replace(/[^a-z0-9]/gi, '-').toLowerCase()}.csv`;
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    const recipients = customerEmail ? [TO_EMAIL, customerEmail] : [TO_EMAIL];
+    // --- Interne E-Mail an evolutionID ---
+    const infoRows = [
+      ['Projektname', projectName],
+      ['Kontakt',     customerName],
+      ['Firma',       company],
+      ['E-Mail',      customerEmail],
+      ['Telefon',     phone],
+    ].filter(([, v]) => v).map(([k, v]) =>
+      `<tr><td style="padding:5px 12px 5px 0;color:#666;white-space:nowrap;"><b>${escapeHtml(k)}</b></td><td style="padding:5px 0;">${escapeHtml(v)}</td></tr>`
+    ).join('');
+
     await resend.emails.send({
       from: FROM_EMAIL,
-      to:   recipients,
+      to:   [TO_EMAIL],
       replyTo: customerEmail || undefined,
-      subject: subject || `Neue IDfMatrix Anfrage – ${projectName || 'Konfiguration'}`,
+      subject: `Neue IDfunction MATRIX Anfrage – ${escapeHtml(projectName || 'Konfiguration')}`,
       html: `
-        <p>Neue Konfigurationsanfrage über den IDfMatrix Konfigurator.</p>
-        <ul>
-          <li><b>Projekt:</b> ${escapeHtml(projectName || '–')}</li>
-          <li><b>Kunde:</b> ${escapeHtml(customerName || '–')}</li>
-          <li><b>E-Mail:</b> ${escapeHtml(customerEmail || '–')}</li>
-        </ul>
-        <p>Die Konfiguration ist als CSV im Anhang.</p>
+        <div style="font-family:sans-serif;max-width:800px;">
+          <p style="font-size:16px;">Liebe Kollegen,</p>
+          <p>eine neue Anfrage für <b>IDfunction MATRIX</b> ist eingetroffen:</p>
+
+          <h3 style="color:#1a3a6e;border-bottom:2px solid #1a3a6e;padding-bottom:4px;margin-top:24px;">Kundendaten</h3>
+          <table style="border-collapse:collapse;font-size:14px;">${infoRows}</table>
+
+          <h3 style="color:#1a3a6e;border-bottom:2px solid #1a3a6e;padding-bottom:4px;margin-top:24px;">Konfiguration</h3>
+          ${cartHtml || ''}
+
+          <p style="margin-top:24px;color:#666;font-size:13px;">Die vollständige Konfiguration ist als CSV im Anhang.</p>
+        </div>
       `,
-      attachments: [
-        {
-          filename,
-          content: Buffer.from('\uFEFF' + csvContent).toString('base64'),
-        }
-      ],
+      attachments: [{
+        filename,
+        content: Buffer.from('\uFEFF' + csvContent).toString('base64'),
+      }],
     });
+
+    // --- Kunden-E-Mail (nur wenn E-Mail angegeben) ---
+    if (customerEmail) {
+      const greeting = customerName ? `Sehr geehrte/r ${escapeHtml(customerName)},` : 'Sehr geehrter Kunde,';
+      await resend.emails.send({
+        from:    FROM_EMAIL,
+        to:      [customerEmail],
+        subject: `Ihre IDfunction MATRIX Anfrage – ${escapeHtml(projectName || 'Konfiguration')}`,
+        html: `
+          <div style="font-family:sans-serif;max-width:800px;">
+            <p style="font-size:16px;">${greeting}</p>
+            <p>vielen Dank für Ihre Anfrage. Wir haben Ihre Konfiguration erhalten und werden uns umgehend bei Ihnen melden.</p>
+
+            <h3 style="color:#1a3a6e;border-bottom:2px solid #1a3a6e;padding-bottom:4px;margin-top:24px;">Ihre Konfiguration</h3>
+            ${cartHtml || ''}
+
+            <p style="margin-top:24px;">Mit freundlichen Grüßen<br><b>Ihr evolutionID Team</b></p>
+          </div>
+        `,
+      });
+    }
+
     res.json({ ok: true });
   } catch (err) {
     console.error('E-Mail-Fehler:', err);
