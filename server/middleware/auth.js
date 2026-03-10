@@ -23,25 +23,25 @@ function requireAdminAuth(req, res, next) {
   res.redirect('/admin-login.html');
 }
 
-// POST /api/login – Site-Passwort
+// POST /login – Site-Passwort (Form-Submit)
 function handleSiteLogin(req, res) {
   const { password } = req.body;
   if (password === SITE_PASSWORD) {
     setCookie(res, 'site_auth', SITE_PASSWORD);
-    res.json({ ok: true });
+    res.redirect('/');
   } else {
-    res.status(401).json({ ok: false, error: 'Falsches Passwort' });
+    res.redirect('/login.html?error=1');
   }
 }
 
-// POST /api/admin-login – Admin-Passwort
+// POST /admin-login – Admin-Passwort (Form-Submit)
 function handleAdminLogin(req, res) {
   const { password } = req.body;
   if (password === ADMIN_PASSWORD) {
     setCookie(res, 'admin_auth', ADMIN_PASSWORD);
-    res.json({ ok: true });
+    res.redirect('/admin.html');
   } else {
-    res.status(401).json({ ok: false, error: 'Falsches Passwort' });
+    res.redirect('/admin-login.html?error=1');
   }
 }
 
