@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IDfunction Matrix Ausweiserstellung - Produktkonfigurator</title>
+<meta name="description" content="Produktkonfigurator für IDfunction Matrix Ausweiserstellung." />
+<link rel="icon" type="image/jpeg" href="/images/favicon.jpg" />
+<link rel="stylesheet" href="/css/main.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo:wght@400;600;700&display=swap" />
+</head>
+<body>
+
+<div class="banner">
+  <img src="/images/logo.png" alt="evolutionID Logo" />
+</div>
+
+<div class="container">
+  <header class="page">
+    <h1>IDfunction Matrix – Produktkonfigurator</h1>
+    <div class="sub">Ausweiserstellung &amp; Bilderfassung – Konfigurieren Sie Ihr System</div>
+  </header>
+
+  <div class="grid">
+    <div id="left">
+
+      <!-- Kundendaten -->
+      <div class="card">
+        <div class="card-head"><div class="dot"></div><div class="title">Kundendaten &amp; Projekt</div><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div class="row row-2">
+            <div>
+              <div class="label">Projektname / Kundenname <span style="color:var(--danger)">*</span></div>
+              <input id="projName" type="text" placeholder="z. B. Musterfirma GmbH – Ausweis 2025" />
+              <div id="projWarn" class="warn" style="display:none; margin-top:6px; font-size:12px;">Bitte Projektname angeben.</div>
+            </div>
+            <div>
+              <div class="label">Firma</div>
+              <input id="firma" type="text" placeholder="Firmenname" />
+            </div>
+            <div>
+              <div class="label">Nachname</div>
+              <input id="nachname" type="text" placeholder="Nachname" />
+            </div>
+            <div>
+              <div class="label">Vorname</div>
+              <input id="vorname" type="text" placeholder="Vorname" />
+            </div>
+            <div>
+              <div class="label">E-Mail</div>
+              <input id="email" type="email" placeholder="email@beispiel.de" />
+            </div>
+            <div>
+              <div class="label">Telefon</div>
+              <input id="telefon" type="tel" placeholder="+49 89 ..." />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auswahl 1 -->
+      <div class="card">
+        <div class="card-head"><div class="dot"></div><div class="title">Auswahl 1 – Ausweiserstellung</div><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div id="a1Options" class="row row-3" style="margin-bottom: 12px;"></div>
+          <div class="row row-2" style="align-items:start;">
+            <div>
+              <div class="label">Wie viele Arbeitsplätze zur Ausweiserstellung?</div>
+              <input id="a1Work" type="number" min="1" value="1"/>
+            </div>
+          </div>
+          <div id="a1CodingHint" class="hint" style="display:none; margin-top:8px;">
+            <b>Hinweis:</b> Für Codierung wird eine <b>Vorabklärung mit evolutionID</b> empfohlen. Kontakt: <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a>
+          </div>
+          <div id="a1UsbHint" class="hint" style="display:none; margin-top:6px;">
+            <b>Hinweis:</b> Bei <b>Druck &amp; Codierung</b> muss der Drucker per <b>USB</b> mit dem PC verbunden werden.
+          </div>
+          <div id="a1LettershopRow" style="display:none; margin-top:8px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;">
+              <input id="a1Lettershop" type="checkbox" checked/> IDfunction Lettershop hinzufügen (IDF1001209, 990,00 €/Stk.)
+            </label>
+          </div>
+          <div id="techBlock" style="display:none; margin-top:12px;">
+            <div class="label">Welche Ausweistechnologie wird verwendet? (Mehrfachauswahl möglich)</div>
+            <div id="techCards" class="row row-3 danger-ring" style="padding: 8px 8px;"></div>
+            <div id="techWarn" class="warn" style="display:none; margin-top:8px;"><b>Pflichtangabe:</b> Bitte wählen Sie mindestens eine Ausweistechnologie aus.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auswahl 2 -->
+      <div class="card">
+        <div class="card-head"><div class="dot"></div><div class="title">Auswahl 2 – Bilderfassung</div><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div id="a2Options" class="row row-2" style="margin-bottom: 12px;"></div>
+          <div id="a2Extras" style="display:none; margin-top:8px;">
+            <div class="label">Kamera-Optionen</div>
+            <div id="a2Cameras" class="row row-3" style="margin-bottom: 6px;"></div>
+            <div class="row">
+              <label style="display:flex; align-items:center; gap:8px; font-weight:600;">
+                <input id="a2KI" type="checkbox"/> KI-Modul aktivieren
+              </label>
+              <details class="info" style="margin-top:8px;">
+                <summary><span class="badge">&#x2139;&#xFE0F; Info</span> <span class="emph">IDimage &amp; KI-Modul &#8211; Was steckt dahinter?</span></summary>
+                <div class="muted" style="margin-top:8px;">
+                  <div class="row row-2">
+                    <div>
+                      <div class="label">IDimage &#8211; Bilderfassungssoftware</div>
+                      <p style="margin:6px 0;">Windows-Tool zur professionellen Bildaufnahme, direkt aus IDfunction aufrufbar. Unterstützt Webcam und SLR-Kamera.</p>
+                      <ul style="margin:0; padding-left:16px;">
+                        <li>Automatische Gesichtserkennung &amp; Bildausschnitt</li>
+                        <li>Bildgröße &amp; Hintergrundoptimierung</li>
+                        <li>Direkte Ablage der Bilddatei in IDfunction</li>
+                        <li>Unterstützung gängiger Bilddateiformate per Upload</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <div class="label">KI-Modul</div>
+                      <p style="margin:6px 0;">Zusatzmodul für IDimage zur KI-basierten Hintergrundentfernung &#8211; für homogene, optimierte Mitarbeiterfotos im Ausweisdruck.</p>
+                      <ul style="margin:0; padding-left:16px;">
+                        <li>Automatische Hintergrundentfernung per KI</li>
+                        <li>Einheitlicher, neutraler Hintergrund</li>
+                        <li>Automatische Qualitätsprüfung</li>
+                        <li><b>Empfehlung:</b> Leistungsfähiger PC mit Grafikchip (GPU)</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </details>
+              <div id="a2KIHint" class="hint" style="display:none; margin-top:6px;"><b>Hinweis:</b> Für die reibungsfreie Nutzung des KI-Moduls wird ein <b>leistungsfähiger PC</b> empfohlen &#8211; idealerweise mit <b>Grafikchip (GPU)</b>.</div>
+            </div>
+            <div class="row">
+              <div class="label">Wie viele Arbeitsplätze mit Bilderfassung?</div>
+              <input id="a2Work" type="number" min="1" value="1"/>
+            </div>
+            <div id="a2NoCamHint" class="hint" style="display:none; margin-top:6px;"><b>Hinweis:</b> Gängige Bilddateien können per Upload verwendet werden und/oder es kann eine <b>USB‑Webcam</b> eingesetzt werden.</div>
+            <div class="row" style="margin-top:8px;">
+              <label style="display:flex; align-items:center; gap:8px; font-weight:600;">
+                <input id="a2Stativ" type="checkbox"/> Stative für Kamera hinzufügen
+              </label>
+              <div class="muted" style="font-size:12px; margin-top:2px;">Tripod-Stativ für SLR &amp; Webcam (CAN4005015)</div>
+            </div>
+            <div class="row" style="margin-top:8px;">
+              <label style="display:flex; align-items:center; gap:8px; font-weight:600;">
+                <input id="a2Lighting" type="checkbox"/> Fotobeleuchtung hinzufügen
+              </label>
+              <div class="muted" style="font-size:12px; margin-top:2px;">LED-Beleuchtungskit für optimale Bilderfassung (CAN4005019)</div>
+            </div>
+            <div id="a2MismatchLess" class="hint" style="display:none; margin-top:6px;">Hinweis: Die Anzahl der Arbeitsplätze für die <b>Bilderfassung</b> ist <b>geringer</b> als die Arbeitsplätze für die <b>Ausweiserstellung</b>. Bitte prüfen, ob das beabsichtigt ist.</div>
+            <div id="a2Mismatch" class="hint" style="display:none; margin-top:6px;">Hinweis: Die Anzahl der Arbeitsplätze in <b>Auswahl 1</b> und <b>Bilderfassung</b> unterscheiden sich. Bitte prüfen.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auswahl 3 – Drucker -->
+      <div class="card">
+        <div class="card-head"><div class="dot"></div><div class="title">Auswahl 3 – Drucker</div><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div id="a3Printers" class="row row-3" style="margin-bottom:12px;"></div>
+          <div id="a3RibbonWrapper" style="display:none; margin-top:10px; margin-left:12px; padding:10px 12px; background:#f8f9fa; border-left:3px solid #c8d8a0; border-radius:0 8px 8px 0;">
+            <div class="label" style="font-size:12px; color:#666; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Farbband-Typ</div>
+            <div class="ribbon-opts">
+              <label><input type="radio" name="ribbon" id="ribbonColor" value="color"/> Farbband YMCKO (MAT4001001)</label>
+              <label><input type="radio" name="ribbon" id="ribbonBlack" value="black"/> Schwarzband (MAT4001002)</label>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <details class="info">
+              <summary><span class="badge">ℹ️ Info</span> <span class="emph">Druckertechnologien – Vergleich</span></summary>
+              <div class="muted" style="margin-top:8px;">
+                <div class="row row-2">
+                  <div>
+                    <div class="label">Retransfer</div>
+                    <ul>
+                      <li>Sehr hohe Druckqualität (randlos), ideal für Vollfläche.</li>
+                      <li>Sehr gute Farbwiedergabe inkl. feiner Schattierungen.</li>
+                      <li>Besser bei unebenen Karten/Chipkarten.</li>
+                      <li>Höhere Material-/Gerätekosten, tendenziell langsamer.</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <div class="label">Direktdruck</div>
+                    <ul>
+                      <li>Schneller, geringere Verbrauchskosten.</li>
+                      <li>Bestimmte Farben (insb. Graustufen/Pastelltöne) schwieriger abbildbar.</li>
+                      <li>Randlos eingeschränkt; Artefakte möglich.</li>
+                      <li>Für einfache Layouts oft ausreichend.</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="muted" style="margin-top:6px;">Hinweis: Dies ist eine <b>Info</b> – die Auswahl erfolgt oben.</div>
+              </div>
+            </details>
+          </div>
+          <div id="a3NeedContact" class="hint" style="display:none; margin-top:8px;">Bitte <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a> kontaktieren, um zu prüfen, ob ein vorhandener Drucker genutzt und ein Codiermodul eingebaut werden kann.</div>
+        </div>
+      </div>
+
+      <!-- Auswahl 4 – Codiermodul -->
+      <div id="a3CodeReaderCard" class="card" style="display:none;">
+        <div class="card-head"><div class="dot"></div><div class="title">Auswahl 4 – Codiermodul</div><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div id="a3CodeReaderOptions" class="row row-2"></div>
+          <div id="a3NeedContactCoding" class="hint" style="display:none; margin-top:8px;">Bei <b>Kein Drucker</b> und Codierung: <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a> kontaktieren.</div>
+        </div>
+      </div>
+
+      <!-- Auswahl 5 – Umsetzung -->
+      <div class="card">
+        <div class="card-head"><div class="dot"></div><div class="title">Auswahl 5 – Umsetzung</div><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <div id="a5Options" class="row row-2" style="margin-bottom:12px;"></div>
+          <div id="a5RemoteHint" class="hint" style="display:none; margin-top:8px;">
+            <b>Hinweis Remote-Umsetzung:</b> Für eine effiziente Inbetriebnahme wird ein <b>technisch versierter Ansprechpartner vor Ort</b> benötigt, der die Hardware eigenständig anschließen und grundlegende IT-Einstellungen (Netzwerk, Treiber, Benutzerrechte) vornehmen kann. evolutionID übernimmt die Einrichtung der Software und Konfiguration per Fernzugriff.
+          </div>
+          <div id="a5OnsiteHint" class="hint" style="display:none; margin-top:8px;">
+            <b>Hinweis Vor-Ort-Umsetzung:</b> Es fallen Reisekosten an. Die Höhe richtet sich nach der Entfernung zu unserem Standort in München (80636). Bitte ggf. Rücksprache mit evolutionID halten.
+          </div>
+        </div>
+      </div>
+
+      <!-- Auswahl 6 – Optionale Module -->
+      <div class="card">
+        <div class="card-head"><div class="dot"></div><div class="title">Auswahl 6 – Optionale Module</div><span class="chevron">▾</span></div>
+        <div class="card-body">
+          <label class="check-card" style="display:flex; gap:10px; align-items:flex-start;">
+            <input id="optCustom" type="checkbox" />
+            <div>
+              <div class="label">Anpassung an kundenspezifische Prozesse</div>
+              <div class="muted">z. B. Freitextfelder, UI‑Anpassungen, zusätzliche Attribute. Anforderungen bitte möglichst konkret an <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a> senden.</div>
+            </div>
+          </label>
+          <div id="optCustomDescRow" class="row" style="display:none; margin:8px 0 12px 28px;">
+            <div class="label">Bedarf / Beschreibung (Anpassungen)</div>
+            <textarea id="optCustomDesc" rows="3" placeholder="z. B. zusätzliche Felder, UI-Anpassungen, Workflows..."></textarea>
+          </div>
+
+          <label class="check-card" style="display:flex; gap:10px; align-items:flex-start;">
+            <input id="optSupplies" type="checkbox" />
+            <div>
+              <div class="label">Spezialanforderung Drucker</div>
+              <div class="muted">UV-Folie, Laminat oder besondere Anforderungen – bitte Bedarf an <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a> senden.</div>
+            </div>
+          </label>
+          <div id="optSuppliesDescRow" class="row" style="display:none; margin:8px 0 12px 28px;">
+            <div class="label">Bedarf / Beschreibung (Verbrauchsmaterial)</div>
+            <textarea id="optSuppliesDesc" rows="3" placeholder="z. B. Farbbandtyp, Mengen, Reinigungsintervalle..."></textarea>
+          </div>
+
+          <label class="check-card" style="display:flex; gap:10px; align-items:flex-start;">
+            <input id="optAccessories" type="checkbox" />
+            <div>
+              <div class="label">Zubehör (Ausweishüllen, Jojos, etc.)</div>
+              <div class="muted">Bitte Bedarf an <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a> senden.</div>
+            </div>
+          </label>
+          <div id="optAccessoriesDescRow" class="row" style="display:none; margin:8px 0 12px 28px;">
+            <div class="label">Bedarf / Beschreibung (Zubehör)</div>
+            <textarea id="optAccessoriesDesc" rows="3" placeholder="z. B. Hüllen-Typ, Jojo-Anzahl, Clip-/Bandvarianten..."></textarea>
+          </div>
+
+          <label class="check-card" style="display:flex; gap:10px; align-items:flex-start;">
+            <input id="optTagAnalyzer" type="checkbox" />
+            <div>
+              <div class="label">Ausweisanalysesoftware – evolutionID <b>TagAnalyzer</b></div>
+              <div class="muted">Infos: <a href="https://www.evolutionid.com" target="_blank">www.evolutionid.com</a> oder <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a>.</div>
+            </div>
+          </label>
+          <div id="optTagAnalyzerDescRow" class="row" style="display:none; margin:8px 0 12px 28px;">
+            <div class="label">Bedarf / Beschreibung (TagAnalyzer)</div>
+            <textarea id="optTagAnalyzerDesc" rows="3" placeholder="z. B. geplanter Einsatz, Anzahl Lizenzen, Integrationsbedarf..."></textarea>
+          </div>
+
+          <div class="row" style="margin-top:6px;">
+            <div class="label">Allgemeine Notizen</div>
+            <textarea id="notes" rows="4" placeholder="Weitere Anmerkungen, die im Konfigurator nicht abgefragt werden"></textarea>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /left -->
+
+    <!-- Warenkorb -->
+    <aside id="cartCol">
+      <div class="card sticky">
+        <div class="card-body">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <div class="label" style="color: var(--brand-primary); font-size:18px;">Warenkorb</div>
+            <span id="cartCount" class="badge">0 Positionen</span>
+          </div>
+
+          <!-- Projektmanagement -->
+          <div style="margin-top:12px; padding:10px 12px; background:#f8f9fa; border-radius:10px; border:1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <div style="font-weight:600; font-size:13px;">Projektmanagement <span class="muted" style="font-weight:400;">(DLP1005012)</span></div>
+            </div>
+            <div class="muted" style="font-size:12px; margin-bottom:8px;">
+              Automatisch berechnet &ndash; 1 Tag Basis + 0,5 Tage je zus&auml;tzlichem Arbeitsplatz.<br>
+              <span style="margin-top:4px; display:block;">Beinhaltet: Abklärung generell &bull; Einrichtung IDfunction &bull; Datenbankanbindung &bull; Inbetriebnahme Ausweiserstellung</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div class="label" style="margin:0; white-space:nowrap;">Dienstleistungstage:</div>
+              <input id="pmDaysInput" type="number" min="0.5" step="0.5" value="1" style="max-width:80px; margin:0;" />
+            </div>
+          </div>
+
+          <div id="cartItems" style="margin-top:10px;"></div>
+          <div id="cartTotal"></div>
+
+          <!-- Softwaremaintenance -->
+          <div style="border-top:2px solid var(--border); margin-top:16px; padding-top:12px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+              <div class="label" style="color: var(--brand-primary); font-size:16px; margin-bottom:0;">Softwaremaintenance</div>
+              <span class="badge">Mindestlaufzeit 3 Jahre</span>
+            </div>
+            <div class="muted" style="font-size:12px; margin-top:4px; margin-bottom:10px;">
+              Wird automatisch auf Basis der gewählten Software berechnet. Mindestlaufzeit 3 Jahre – die Anzahl pro Artikel ergibt sich aus <b>Lizenzen × Laufzeit&nbsp;(Jahre)</b>.
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+              <div class="label" style="margin:0; white-space:nowrap; font-size:13px;">Laufzeit (Jahre):</div>
+              <input id="maintYearsInput" type="number" min="3" step="1" value="3" style="max-width:80px; margin:0;" />
+            </div>
+            <div id="maintItems" style="margin-top:6px;"></div>
+            <div id="maintTotal"></div>
+          </div>
+
+          <!-- Kunde/Projekt -->
+          <div id="customerBox" style="margin-top:12px;" class="muted"></div>
+
+          <!-- Hinweise -->
+          <div id="cartHints" style="margin-top:12px;"></div>
+
+          <!-- Status -->
+          <div id="statusText" class="muted" style="margin-top:12px;">Bitte Kunden-/Projektnamen und alle Pflichtauswahlen treffen.</div>
+
+          <!-- Checkout -->
+          <div class="checkout">
+            <button id="checkoutBtn" class="btn btn-primary" disabled>Anfrage abschließen</button>
+            <div class="muted" style="margin-top:6px;">
+              Mit Klick auf <b>„Anfrage abschließen"</b> wird eine CSV‑Datei heruntergeladen. Bitte senden Sie die Datei per E‑Mail an
+              <a href="mailto:sales@evolutionid.com">sales@evolutionid.com</a>.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script src="/js/config.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/ui.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
