@@ -32,15 +32,12 @@ app.use('/images', express.static(path.join(PUBLIC, 'images')));
 app.get('/login.html',       (req, res) => res.sendFile(path.join(PUBLIC, 'login.html')));
 app.get('/admin-login.html', (req, res) => res.sendFile(path.join(PUBLIC, 'admin-login.html')));
 
-// ---------- API (Site-Auth für GET /api/articles, Admin-Auth für POST) ----------
-app.get('/api/articles', requireSiteAuth, articlesRouter);
-// Admin-Auth für Preisänderungen
-const adminArticlesRouter = require('express').Router();
-adminArticlesRouter.post('/', requireAdminAuth, (req, res, next) => {
-  req.url = '/';
-  articlesRouter(req, res, next);
-});
-app.use('/api/articles', adminArticlesRouter);
+// ---------- API ----------
+app.use('/api/articles', (req, res, next) => {
+  if (req.method === 'GET')  return requireSiteAuth(req, res, next);
+  if (req.method === 'POST') return requireAdminAuth(req, res, next);
+  next();
+}, articlesRouter);
 app.use('/api/send-email', requireSiteAuth, emailRouter);
 
 // ---------- Admin-Bereich ----------
