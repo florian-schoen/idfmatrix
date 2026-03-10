@@ -129,7 +129,6 @@ function renderCart() {
   // Kundendaten-Box
   const parts = [];
   parts.push(kv("Projekt", state.projName || "–"));
-  if (state.company)   parts.push(kv("Firma", state.company));
   const contactName = [state.firstName, state.lastName].filter(Boolean).join(" ");
   if (contactName)     parts.push(kv("Kontakt", contactName));
   if (state.email)     parts.push(kv("E\u2011Mail", state.email));
@@ -214,13 +213,16 @@ function update() {
 
   // E-Mail Validierung
   const emailFilled = state.email && state.email.trim().length > 0;
-  const emailValid  = !emailFilled || isValidEmail(state.email);
-  el.emailWarn.style.display = (emailFilled && !emailValid) ? "block" : "none";
+  const emailValid  = emailFilled && isValidEmail(state.email);
+  el.emailWarn.style.display = (emailFilled && !isValidEmail(state.email)) ? "block" : "none";
 
-  // Status + Button
-  el.checkoutBtn.disabled = !isValid();
-  el.statusText.textContent = isValid()
+  // Status + Buttons
+  const valid = isValid();
+  el.checkoutBtn.disabled = !valid;
+  if (el.checkoutBtnTop) el.checkoutBtnTop.disabled = !valid;
+  el.statusText.textContent = valid
     ? "Konfiguration vollständig. Anfrage absenden m\u00f6glich."
-    : (emailFilled && !emailValid) ? "Bitte eine g\u00fcltige E-Mail-Adresse eingeben."
-    : (validProject ? "Bitte alle Pflichtauswahlen treffen." : "Bitte Kunden-/Projektnamen eingeben.");
+    : (emailFilled && !isValidEmail(state.email)) ? "Bitte eine g\u00fcltige E-Mail-Adresse eingeben."
+    : (!emailFilled) ? "Bitte E-Mail-Adresse (Partnerinformation) eingeben."
+    : (validProject ? "Bitte alle Pflichtauswahlen treffen." : "Bitte Projektname eingeben.");
 }

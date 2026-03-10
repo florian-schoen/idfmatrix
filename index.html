@@ -29,15 +29,12 @@
       <div class="card">
         <div class="card-head"><div class="dot"></div><div class="title">Kundendaten &amp; Projekt</div><span class="chevron">▾</span></div>
         <div class="card-body">
+          <div class="label" style="color:var(--brand-primary); margin-bottom:10px; font-size:13px; text-transform:uppercase; letter-spacing:.5px;">Partnerinformationen</div>
           <div class="row row-2">
             <div>
-              <div class="label">Projektname / Kundenname <span style="color:var(--danger)">*</span></div>
+              <div class="label">Projektname <span style="color:var(--danger)">*</span></div>
               <input id="projName" type="text" placeholder="z. B. Musterfirma GmbH – Ausweis 2025" />
               <div id="projWarn" class="warn" style="display:none; margin-top:6px; font-size:12px;">Bitte Projektname angeben.</div>
-            </div>
-            <div>
-              <div class="label">Firma</div>
-              <input id="firma" type="text" placeholder="Firmenname" />
             </div>
             <div>
               <div class="label">Nachname</div>
@@ -48,13 +45,26 @@
               <input id="vorname" type="text" placeholder="Vorname" />
             </div>
             <div>
-              <div class="label">E-Mail</div>
+              <div class="label">E-Mail <span style="color:var(--danger)">*</span></div>
               <input id="email" type="email" placeholder="email@beispiel.de" />
               <div id="emailWarn" class="warn" style="display:none; margin-top:6px; font-size:12px;">Bitte eine gültige E-Mail-Adresse eingeben.</div>
             </div>
             <div>
               <div class="label">Telefon</div>
               <input id="telefon" type="tel" placeholder="+49 89 ..." />
+            </div>
+          </div>
+          <div style="border-top:1px solid var(--border); margin-top:20px; padding-top:16px;">
+            <div class="label" style="color:var(--brand-primary); margin-bottom:10px; font-size:13px; text-transform:uppercase; letter-spacing:.5px;">Endkunde <span class="muted" style="font-weight:400; text-transform:none; letter-spacing:0;">(optional)</span></div>
+            <div class="row row-2">
+              <div><div class="label">Firma</div><input id="endFirma" type="text" placeholder="Firmenname" /></div>
+              <div><div class="label">Straße &amp; Hausnummer</div><input id="endStrasse" type="text" placeholder="Musterstraße 1" /></div>
+              <div><div class="label">PLZ</div><input id="endPlz" type="text" placeholder="80636" /></div>
+              <div><div class="label">Ort</div><input id="endOrt" type="text" placeholder="München" /></div>
+              <div><div class="label">Vorname Ansprechpartner</div><input id="endVorname" type="text" placeholder="Vorname" /></div>
+              <div><div class="label">Nachname Ansprechpartner</div><input id="endNachname" type="text" placeholder="Nachname" /></div>
+              <div><div class="label">E-Mail Ansprechpartner</div><input id="endEmail" type="email" placeholder="email@endkunde.de" /></div>
+              <div><div class="label">Telefon Ansprechpartner</div><input id="endTelefon" type="tel" placeholder="+49 ..." /></div>
             </div>
           </div>
         </div>
@@ -286,6 +296,8 @@
     <aside id="cartCol">
       <div class="card sticky">
         <div class="card-body">
+          <button id="checkoutBtnTop" class="btn btn-primary" style="width:100%; margin-bottom:8px;" disabled>Anfrage absenden</button>
+          <div class="hint" style="font-size:12px; margin-bottom:16px;">Bitte alle Pflichtfelder ausfüllen und Anfrage absenden – das evolutionID Team meldet sich umgehend bei Ihnen.</div>
           <div style="display:flex; align-items:center; justify-content:space-between;">
             <div class="label" style="color: var(--brand-primary); font-size:18px;">Warenkorb</div>
             <span id="cartCount" class="badge">0 Positionen</span>

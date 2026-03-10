@@ -2,7 +2,8 @@
 
 // ---------- State ----------
 const state = {
-  projName: "", company: "", lastName: "", firstName: "", email: "", phone: "",
+  projName: "", lastName: "", firstName: "", email: "", phone: "",
+  end: { firma: "", strasse: "", plz: "", ort: "", vorname: "", nachname: "", email: "", telefon: "" },
   a1Variant: "", a1Work: 1,
   tech: { legic: false, classic: false, desfire: false },
   a2Variant: "", a2Camera: "", a2KI: false, a2Work: 1,
@@ -29,6 +30,15 @@ const el = {
   email: document.getElementById("email"),
   emailWarn: document.getElementById("emailWarn"),
   telefon: document.getElementById("telefon"),
+  endFirma:    document.getElementById("endFirma"),
+  endStrasse:  document.getElementById("endStrasse"),
+  endPlz:      document.getElementById("endPlz"),
+  endOrt:      document.getElementById("endOrt"),
+  endVorname:  document.getElementById("endVorname"),
+  endNachname: document.getElementById("endNachname"),
+  endEmail:    document.getElementById("endEmail"),
+  endTelefon:  document.getElementById("endTelefon"),
+  checkoutBtnTop: document.getElementById("checkoutBtnTop"),
   a1Options: document.getElementById("a1Options"),
   a1Work: document.getElementById("a1Work"),
   a1CodingHint: document.getElementById("a1CodingHint"),
@@ -87,11 +97,18 @@ const el = {
 
 // ---------- Event-Listener ----------
 el.projName.addEventListener("input", e => { state.projName = e.target.value; update(); });
-el.firma.addEventListener("input",    e => { state.company   = e.target.value; update(); });
 el.nachname.addEventListener("input", e => { state.lastName  = e.target.value; update(); });
 el.vorname.addEventListener("input",  e => { state.firstName = e.target.value; update(); });
 el.email.addEventListener("input",   e => { state.email      = e.target.value; update(); });
 el.telefon.addEventListener("input", e => { state.phone      = e.target.value; update(); });
+el.endFirma.addEventListener("input",    e => { state.end.firma    = e.target.value; update(); });
+el.endStrasse.addEventListener("input",  e => { state.end.strasse  = e.target.value; update(); });
+el.endPlz.addEventListener("input",      e => { state.end.plz      = e.target.value; update(); });
+el.endOrt.addEventListener("input",      e => { state.end.ort      = e.target.value; update(); });
+el.endVorname.addEventListener("input",  e => { state.end.vorname  = e.target.value; update(); });
+el.endNachname.addEventListener("input", e => { state.end.nachname = e.target.value; update(); });
+el.endEmail.addEventListener("input",    e => { state.end.email    = e.target.value; update(); });
+el.endTelefon.addEventListener("input",  e => { state.end.telefon  = e.target.value; update(); });
 
 function setA1(v) {
   state.a1Variant = v;
@@ -173,35 +190,42 @@ el.pmDaysInput.addEventListener("input", e => {
 
 function setA5(v) { state.a5Umsetzung = v; update(); }
 
-el.checkoutBtn.addEventListener("click", async () => {
+function setCheckoutState(disabled, text) {
+  el.checkoutBtn.disabled = disabled;
+  el.checkoutBtn.textContent = text;
+  if (el.checkoutBtnTop) { el.checkoutBtnTop.disabled = disabled; el.checkoutBtnTop.textContent = text; }
+}
+
+async function doSendEmail() {
   if (!isValid()) return;
-  el.checkoutBtn.disabled = true;
-  el.checkoutBtn.textContent = 'Wird gesendet…';
+  setCheckoutState(true, 'Wird gesendet…');
+  const endHasData = Object.values(state.end).some(v => v && v.trim());
   try {
     const r = await fetch('/api/send-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         projectName:   state.projName,
-        customerName:  [state.firstName, state.lastName].filter(Boolean).join(' ') || undefined,
-        customerEmail: state.email   || undefined,
-        company:       state.company || undefined,
-        phone:         state.phone   || undefined,
+        firstName:     state.firstName  || undefined,
+        lastName:      state.lastName   || undefined,
+        customerEmail: state.email      || undefined,
+        phone:         state.phone      || undefined,
+        endkunde:      endHasData ? state.end : undefined,
         csvContent:    buildCSV(),
         cartHtml:      buildCartHtml(),
       }),
     });
     if (r.ok) {
-      el.checkoutBtn.textContent = 'Anfrage gesendet ✓';
+      setCheckoutState(true, 'Anfrage gesendet ✓');
     } else {
-      el.checkoutBtn.textContent = 'Fehler – bitte erneut versuchen';
-      el.checkoutBtn.disabled = false;
+      setCheckoutState(false, 'Fehler – bitte erneut versuchen');
     }
   } catch(_) {
-    el.checkoutBtn.textContent = 'Fehler – bitte erneut versuchen';
-    el.checkoutBtn.disabled = false;
+    setCheckoutState(false, 'Fehler – bitte erneut versuchen');
   }
-});
+}
+
+el.checkoutBtn.addEventListener("click", doSendEmail);
 
 // ---------- CSV-Inhalt aufbauen ----------
 function buildCSV() {
@@ -236,7 +260,7 @@ function buildCSV() {
     rows.push(""); rows.push("");
   }
 
-  const kd = [["Projektname",state.projName],["Vorname",state.firstName],["Nachname",state.lastName],["Firma",state.company],["E-Mail",state.email],["Telefon",state.phone]];
+  const kd = [["Projektname",state.projName],["Vorname",state.firstName],["Nachname",state.lastName],["E-Mail",state.email],["Telefon",state.phone]];
   kd.forEach(([k, v]) => { if (v) rows.push([csvCell(k), csvCell(v)].join(";")); });
 
   return rows.join("\r\n");
@@ -309,12 +333,6 @@ function buildCartHtml() {
   // SUP_LETTERSHOP Preis dynamisch ableiten (nach Overrides)
   P.SUP_LETTERSHOP.price = Math.round(P.LETTERSHOP.price * 0.21 * 100) / 100;
 
-  // Collapsible Cards
-  document.getElementById("left").addEventListener("click", e => {
-    const head = e.target.closest(".card-head");
-    if (head) head.closest(".card").classList.toggle("collapsed");
-  });
-
   // Initiales Rendering
   radioCards(el.a1Options, "a1", A1, state.a1Variant, setA1);
   checkCards(el.techCards, "tech", TECH, state.tech, toggleTech);
@@ -323,4 +341,23 @@ function buildCartHtml() {
   radioCards(el.a3Printers, "a3", A3, state.a3Printer, setA3);
   radioCards(el.a5Options, "a5", A5, state.a5Umsetzung, setA5);
   update();
+
+  // Alle Karten in #left einklappen + Nummern vergeben
+  document.querySelectorAll('#left .card').forEach((card, i) => {
+    card.classList.add('collapsed');
+    const dot = card.querySelector('.card-head .dot');
+    if (dot) {
+      const num = document.createElement('div');
+      num.className = 'step-num';
+      num.textContent = i + 1;
+      dot.parentNode.replaceChild(num, dot);
+    }
+  });
+
+  document.getElementById("left").addEventListener("click", e => {
+    const head = e.target.closest(".card-head");
+    if (head) head.closest(".card").classList.toggle("collapsed");
+  });
+
+  if (el.checkoutBtnTop) el.checkoutBtnTop.addEventListener("click", doSendEmail);
 })();

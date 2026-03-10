@@ -27,7 +27,7 @@ function isValid() {
   if (/codierung/.test(state.a1Variant) && !state.a3CodeReader) return false;
   if (/codierung/.test(state.a1Variant) && !hasTech()) return false;
   if (!state.a5Umsetzung) return false;
-  if (state.email && !isValidEmail(state.email)) return false;
+  if (!state.email || !isValidEmail(state.email)) return false;
   return true;
 }
 
