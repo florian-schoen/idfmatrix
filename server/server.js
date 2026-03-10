@@ -21,8 +21,9 @@ app.use(cookieParser());
 app.use(express.json());
 
 // ---------- Auth-Endpunkte (kein Auth nötig) ----------
-app.post('/api/login',       handleSiteLogin);
-app.post('/api/admin-login', handleAdminLogin);
+app.use(express.urlencoded({ extended: false }));
+app.post('/login',       handleSiteLogin);
+app.post('/admin-login', handleAdminLogin);
 
 // ---------- Öffentliche Seiten (Login-Seiten, Bilder, CSS, JS) ----------
 app.use('/css',    express.static(path.join(PUBLIC, 'css')));
