@@ -141,7 +141,7 @@ function renderCart() {
   if (/codierung/.test(state.a1Variant)) hints.push("Vorabklärung Codierung empfohlen – sales@evolutionid.com");
   if (state.a2Variant === "mit" && state.a2Camera === "none") hints.push("Keine Kamera: Bild-Uploads möglich bzw. USB\u2011Webcam nutzbar.");
   if (state.a2Variant === "mit" && state.a2KI) hints.push("KI\u2011Modul: leistungsfähiger PC empfohlen (idealerweise mit Grafikchip).");
-  if (state.a1Variant === "druck_codierung" && state.a3Printer === "none") hints.push("Kein Drucker bei „Druck & Codierung" – bitte sales@evolutionid.com kontaktieren.");
+  if (state.a1Variant === "druck_codierung" && state.a3Printer === "none") hints.push("Kein Drucker bei 'Druck & Codierung' – bitte sales@evolutionid.com kontaktieren.");
   if (state.a2Variant === "mit" && state.a2Work < state.a1Work) hints.push("Hinweis: Bilderfassung-Arbeitsplätze sind geringer als Ausweiserstellung – bitte prüfen.");
   el.cartHints.innerHTML = hints.map(h => '<div class="hint" style="margin-top:6px;">'+escapeHTML(h)+'</div>').join("");
 
