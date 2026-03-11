@@ -5,7 +5,7 @@ const state = {
   projName: "", lastName: "", firstName: "", email: "", phone: "",
   end: { firma: "", strasse: "", plz: "", ort: "", vorname: "", nachname: "", email: "", telefon: "" },
   a1Variant: "", a1Work: 1,
-  tech: { legic: false, classic: false, desfire: false },
+  tech: { legic: false, classic: false, desfire: false, unknown: false },
   a2Variant: "", a2Camera: "", a2KI: false, a2Work: 1,
   a3Printer: "", a3CodeReader: "", a3Ribbon: "color",
   a2Lighting: false, qtyLed: null, a2Stativ: false,
@@ -48,6 +48,7 @@ const el = {
   techBlock: document.getElementById("techBlock"),
   techCards: document.getElementById("techCards"),
   techWarn: document.getElementById("techWarn"),
+  techUnknownHint: document.getElementById("techUnknownHint"),
   a2Options: document.getElementById("a2Options"),
   a2Extras: document.getElementById("a2Extras"),
   a2Cameras: document.getElementById("a2Cameras"),
@@ -81,6 +82,10 @@ const el = {
   optTagAnalyzer: document.getElementById("optTagAnalyzer"),
   optTagAnalyzerDescRow: document.getElementById("optTagAnalyzerDescRow"),
   optTagAnalyzerDesc: document.getElementById("optTagAnalyzerDesc"),
+  optCustomDescWarn:      document.getElementById("optCustomDescWarn"),
+  optSuppliesDescWarn:    document.getElementById("optSuppliesDescWarn"),
+  optAccessoriesDescWarn: document.getElementById("optAccessoriesDescWarn"),
+  optTagDescWarn:         document.getElementById("optTagDescWarn"),
   notes: document.getElementById("notes"),
   cartItems: document.getElementById("cartItems"),
   maintItems: document.getElementById("maintItems"),
@@ -120,7 +125,15 @@ function setA1(v) {
   update();
 }
 function setCodeReader(v) { state.a3CodeReader = v; update(); }
-function toggleTech(key, val) { state.tech[key] = val; update(); }
+function toggleTech(key, val) {
+  state.tech[key] = val;
+  if (key === 'unknown' && val) {
+    state.tech.legic = false; state.tech.classic = false; state.tech.desfire = false;
+  } else if (key !== 'unknown' && val) {
+    state.tech.unknown = false;
+  }
+  update();
+}
 
 el.a1Work.addEventListener("input", e => {
   const n = Math.max(1, parseInt(e.target.value||'1', 10));
@@ -215,6 +228,7 @@ async function doSendEmail() {
         customerEmail: state.email      || undefined,
         phone:         state.phone      || undefined,
         endkunde:      endHasData ? state.end : undefined,
+        unknownTech:   state.tech.unknown || undefined,
         csvContent:    buildCSV(),
         cartHtml:      buildCartHtml(),
       }),

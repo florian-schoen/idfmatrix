@@ -6,7 +6,7 @@ const FROM_EMAIL = process.env.MAIL_FROM || 'idfmatrix@evolutionid.com';
 
 // POST /api/send-email
 router.post('/', async (req, res) => {
-  const { csvContent, cartHtml, firstName, lastName, customerEmail, phone, projectName, endkunde } = req.body;
+  const { csvContent, cartHtml, firstName, lastName, customerEmail, phone, projectName, endkunde, unknownTech } = req.body;
   if (!csvContent) return res.status(400).json({ error: 'Kein CSV-Inhalt' });
 
   const partnerName = [firstName, lastName].filter(Boolean).join(' ');
@@ -34,8 +34,8 @@ router.post('/', async (req, res) => {
     // --- Interne E-Mail an evolutionID ---
     const infoRows = [
       ['Projektname', projectName],
-      ['Nachname',    lastName],
       ['Vorname',     firstName],
+      ['Nachname',    lastName],
       ['E-Mail',      customerEmail],
       ['Telefon',     phone],
     ].filter(([, v]) => v).map(([k, v]) =>
@@ -71,6 +71,16 @@ router.post('/', async (req, res) => {
     // --- Kunden-E-Mail (nur wenn E-Mail angegeben) ---
     if (customerEmail) {
       const greeting = partnerName ? `Sehr geehrte/r ${esc(partnerName)},` : 'Sehr geehrter Kunde,';
+      const unknownTechBlock = unknownTech ? `
+        <div style="margin:20px 0;padding:14px 18px;background:#fff8e1;border-left:4px solid #f59e0b;border-radius:0 8px 8px 0;font-size:14px;line-height:1.6;">
+          <b style="color:#92400e;">&#9888;&#65039; Hinweis: Ausweistechnologie Ihres Endkunden unbekannt</b><br><br>
+          Damit wir die passende Codierlösung für Ihr Projekt konfigurieren können, benötigen wir <b>3 bereits codierte Musterausweise</b> Ihres Endkunden zur technischen Analyse. Nach Auswertung der Ausweise werden wir Sie über die eingesetzte Technologie informieren und die Konfiguration entsprechend anpassen.<br><br>
+          <b>Bitte senden Sie die Ausweise an:</b><br>
+          evolutionID GmbH<br>
+          ${projectName ? `c/o ${esc(projectName)}<br>` : ''}
+          Leonrodstr. 58<br>
+          80636 München
+        </div>` : '';
       await resend.emails.send({
         from:    FROM_EMAIL,
         to:      [customerEmail],
@@ -81,6 +91,7 @@ router.post('/', async (req, res) => {
             <p>vielen Dank für Ihre Anfrage. Wir haben Ihre Konfiguration erhalten und werden uns umgehend bei Ihnen melden.</p>
             ${projectName ? `<p><b>Projektname:</b> ${esc(projectName)}</p>` : ''}
             ${endkundeHtml}
+            ${unknownTechBlock}
 
             <h3 style="color:#1a3a6e;border-bottom:2px solid #1a3a6e;padding-bottom:4px;margin-top:24px;">Ihre Konfiguration</h3>
             ${cartHtml || ''}

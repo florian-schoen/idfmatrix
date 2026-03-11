@@ -8,6 +8,7 @@ const TECH = [
   { key:"legic",   label:"LEGIC Prime / Advant" },
   { key:"classic", label:"MIFARE Classic" },
   { key:"desfire", label:"MIFARE DESFire" },
+  { key:"unknown", label:"Technologie unbekannt" },
 ];
 const A2 = [
   { key:"ohne", label:"Ohne Bilderfassungsmodul" },

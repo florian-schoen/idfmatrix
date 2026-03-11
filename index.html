@@ -42,12 +42,12 @@
               <div id="projWarn" class="warn" style="display:none; margin-top:6px; font-size:12px;">Bitte Projektname angeben.</div>
             </div>
             <div>
-              <div class="label">Nachname</div>
-              <input id="nachname" type="text" placeholder="Nachname" />
+              <div class="label">Vorname</div>
+              <input id="vorname" type="text" placeholder="Vorname" autocomplete="given-name" />
             </div>
             <div>
-              <div class="label">Vorname</div>
-              <input id="vorname" type="text" placeholder="Vorname" />
+              <div class="label">Nachname</div>
+              <input id="nachname" type="text" placeholder="Nachname" autocomplete="family-name" />
             </div>
             <div>
               <div class="label">E-Mail <span style="color:var(--danger)">*</span></div>
@@ -101,7 +101,8 @@
           <div id="techBlock" style="display:none; margin-top:12px;">
             <div class="label">Welche Ausweistechnologie wird verwendet? (Mehrfachauswahl möglich)</div>
             <div id="techCards" class="row row-3 danger-ring" style="padding: 8px 8px;"></div>
-            <div id="techWarn" class="warn" style="display:none; margin-top:8px;"><b>Pflichtangabe:</b> Bitte wählen Sie mindestens eine Ausweistechnologie aus.</div>
+            <div id="techWarn" class="warn" style="display:none; margin-top:8px;"><b>Pflichtangabe:</b> Bitte wählen Sie mindestens eine Ausweistechnologie aus (oder „Technologie unbekannt").</div>
+            <div id="techUnknownHint" class="hint" style="display:none; margin-top:8px;"></div>
           </div>
         </div>
       </div>
@@ -249,8 +250,9 @@
             </div>
           </label>
           <div id="optCustomDescRow" class="row" style="display:none; margin:8px 0 12px 28px;">
-            <div class="label">Bedarf / Beschreibung (Anpassungen)</div>
+            <div class="label">Bedarf / Beschreibung <span style="color:var(--danger)">*</span></div>
             <textarea id="optCustomDesc" rows="3" placeholder="z. B. zusätzliche Felder, UI-Anpassungen, Workflows..."></textarea>
+            <div id="optCustomDescWarn" class="warn" style="display:none; font-size:12px; margin-top:4px;">Bitte Beschreibung eingeben – erforderlich für die Bearbeitung der Anfrage.</div>
           </div>
 
           <label class="check-card" style="display:flex; gap:10px; align-items:flex-start;">
@@ -261,8 +263,9 @@
             </div>
           </label>
           <div id="optSuppliesDescRow" class="row" style="display:none; margin:8px 0 12px 28px;">
-            <div class="label">Bedarf / Beschreibung (Verbrauchsmaterial)</div>
+            <div class="label">Bedarf / Beschreibung <span style="color:var(--danger)">*</span></div>
             <textarea id="optSuppliesDesc" rows="3" placeholder="z. B. Farbbandtyp, Mengen, Reinigungsintervalle..."></textarea>
+            <div id="optSuppliesDescWarn" class="warn" style="display:none; font-size:12px; margin-top:4px;">Bitte Beschreibung eingeben – erforderlich für die Bearbeitung der Anfrage.</div>
           </div>
 
           <label class="check-card" style="display:flex; gap:10px; align-items:flex-start;">
@@ -273,8 +276,9 @@
             </div>
           </label>
           <div id="optAccessoriesDescRow" class="row" style="display:none; margin:8px 0 12px 28px;">
-            <div class="label">Bedarf / Beschreibung (Zubehör)</div>
+            <div class="label">Bedarf / Beschreibung <span style="color:var(--danger)">*</span></div>
             <textarea id="optAccessoriesDesc" rows="3" placeholder="z. B. Hüllen-Typ, Jojo-Anzahl, Clip-/Bandvarianten..."></textarea>
+            <div id="optAccessoriesDescWarn" class="warn" style="display:none; font-size:12px; margin-top:4px;">Bitte Beschreibung eingeben – erforderlich für die Bearbeitung der Anfrage.</div>
           </div>
 
           <label class="check-card" style="display:flex; gap:10px; align-items:flex-start;">
@@ -285,8 +289,9 @@
             </div>
           </label>
           <div id="optTagAnalyzerDescRow" class="row" style="display:none; margin:8px 0 12px 28px;">
-            <div class="label">Bedarf / Beschreibung (TagAnalyzer)</div>
+            <div class="label">Bedarf / Beschreibung <span style="color:var(--danger)">*</span></div>
             <textarea id="optTagAnalyzerDesc" rows="3" placeholder="z. B. geplanter Einsatz, Anzahl Lizenzen, Integrationsbedarf..."></textarea>
+            <div id="optTagDescWarn" class="warn" style="display:none; font-size:12px; margin-top:4px;">Bitte Beschreibung eingeben – erforderlich für die Bearbeitung der Anfrage.</div>
           </div>
 
           <div class="row" style="margin-top:6px;">

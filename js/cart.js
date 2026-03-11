@@ -7,7 +7,7 @@ function calcPmDays() {
 }
 
 function hasTech() {
-  return !!(state.tech.legic || state.tech.classic || state.tech.desfire);
+  return !!(state.tech.legic || state.tech.classic || state.tech.desfire || state.tech.unknown);
 }
 
 function isValidEmail(email) {
@@ -28,6 +28,10 @@ function isValid() {
   if (/codierung/.test(state.a1Variant) && !hasTech()) return false;
   if (!state.a5Umsetzung) return false;
   if (!state.email || !isValidEmail(state.email)) return false;
+  if (state.opt.custom      && !state.opt.customDesc.trim())      return false;
+  if (state.opt.supplies    && !state.opt.suppliesDesc.trim())    return false;
+  if (state.opt.accessories && !state.opt.accessoriesDesc.trim()) return false;
+  if (state.opt.tag         && !state.opt.tagDesc.trim())         return false;
   return true;
 }
 
@@ -40,9 +44,14 @@ function buildCartItems() {
   if (state.a1Variant) {
     if (/codierung/.test(state.a1Variant)) {
       items.push(Object.assign({}, P.PRO, { qty: wp }));
-      if (state.tech.legic)   items.push(Object.assign({}, P.T_LEGIC,   { qty: wp }));
-      if (state.tech.classic) items.push(Object.assign({}, P.T_CLASSIC, { qty: wp }));
-      if (state.tech.desfire) items.push(Object.assign({}, P.T_DESFIRE, { qty: wp }));
+      if (state.tech.unknown) {
+        items.push({ name: "Ausweistechnologie – Abklärung erforderlich", qty: 1, noQty: true,
+          note: "Technologie unbekannt: 3 codierte Musterausweise des Endkunden werden zur Analyse benötigt." });
+      } else {
+        if (state.tech.legic)   items.push(Object.assign({}, P.T_LEGIC,   { qty: wp }));
+        if (state.tech.classic) items.push(Object.assign({}, P.T_CLASSIC, { qty: wp }));
+        if (state.tech.desfire) items.push(Object.assign({}, P.T_DESFIRE, { qty: wp }));
+      }
     } else {
       items.push(Object.assign({}, P.PRINT, { qty: wp }));
     }
@@ -114,10 +123,10 @@ function buildCartItems() {
   }
 
   // A4 – Optionale Module
-  if (state.opt.custom)      items.push({ name: "Option: Anpassung an kundenspezifische Prozesse (Anfrage)", qty: 1, note: (state.opt.customDesc||"").trim() || "Bitte Anforderungen konkret an sales@evolutionid.com senden." });
-  if (state.opt.supplies)    items.push({ name: "Option: Verbrauchsmaterial für Drucker (Anfrage)", qty: 1, note: (state.opt.suppliesDesc||"").trim() || "Bitte Bedarf an sales@evolutionid.com senden." });
-  if (state.opt.accessories) items.push({ name: "Option: Zubehör (Hüllen, Jojos, etc.) (Anfrage)", qty: 1, note: (state.opt.accessoriesDesc||"").trim() || "Bitte Bedarf an sales@evolutionid.com senden." });
-  if (state.opt.tag)         items.push({ name: "Option: evolutionID TagAnalyzer (Anfrage)", qty: 1, note: (state.opt.tagDesc||"").trim() || "Infos unter www.evolutionid.com oder sales@evolutionid.com." });
+  if (state.opt.custom)      items.push({ name: "Option: Anpassung an kundenspezifische Prozesse (Anfrage)", qty: 1, noQty: true, note: (state.opt.customDesc||"").trim() || "Bitte Anforderungen konkret an sales@evolutionid.com senden." });
+  if (state.opt.supplies)    items.push({ name: "Option: Spezialanforderung Drucker (Anfrage)", qty: 1, noQty: true, note: (state.opt.suppliesDesc||"").trim() || "Bitte Bedarf an sales@evolutionid.com senden." });
+  if (state.opt.accessories) items.push({ name: "Option: Zubehör (Hüllen, Jojos, etc.) (Anfrage)", qty: 1, noQty: true, note: (state.opt.accessoriesDesc||"").trim() || "Bitte Bedarf an sales@evolutionid.com senden." });
+  if (state.opt.tag)         items.push({ name: "Option: evolutionID TagAnalyzer (Anfrage)", qty: 1, noQty: true, note: (state.opt.tagDesc||"").trim() || "Infos unter www.evolutionid.com oder sales@evolutionid.com." });
 
   // Automatische Zusatzartikel
   const camUsbItem = items.find(it => it.sku === "CAN4005018");

@@ -71,9 +71,13 @@ function addCartItem(container, item) {
     container.appendChild(box); return;
   }
 
-  right.innerHTML = qtyLabel+': <b>'+item.qty+'</b>';
-  if (item.price != null) {
-    right.innerHTML += '<br><span class="muted" style="font-size:12px;">'+fmt(item.price)+' x '+item.qty+'<br>= <b>'+fmt(item.price * item.qty)+'</b></span>';
+  if (item.noQty) {
+    right.innerHTML = '<span class="badge">Anfrage</span>';
+  } else {
+    right.innerHTML = qtyLabel+': <b>'+item.qty+'</b>';
+    if (item.price != null) {
+      right.innerHTML += '<br><span class="muted" style="font-size:12px;">'+fmt(item.price)+' x '+item.qty+'<br>= <b>'+fmt(item.price * item.qty)+'</b></span>';
+    }
   }
 
   if (item.warnIfLess != null && item.qty < item.warnIfLess) {
@@ -168,9 +172,19 @@ function update() {
   el.a1Lettershop.checked = state.a1Lettershop;
   const needsTech = /codierung/.test(state.a1Variant);
   el.techBlock.style.display = needsTech ? "block" : "none";
-  el.techCards.className = "row row-3" + (needsTech && !hasTech() ? " danger-ring" : "");
+  el.techCards.className = "row row-2" + (needsTech && !hasTech() ? " danger-ring" : "");
   checkCards(el.techCards, "tech", TECH, state.tech, toggleTech);
   el.techWarn.style.display = (needsTech && !hasTech()) ? "block" : "none";
+  if (el.techUnknownHint) {
+    if (needsTech && state.tech.unknown) {
+      const proj = state.projName.trim();
+      const addr = proj ? `evolutionID GmbH &bull; c/o ${escapeHTML(proj)} &bull; Leonrodstr.&nbsp;58 &bull; 80636&nbsp;München` : `evolutionID GmbH &bull; Leonrodstr.&nbsp;58 &bull; 80636&nbsp;München`;
+      el.techUnknownHint.innerHTML = `<b>Hinweis – Ausweistechnologie unbekannt:</b> Damit wir die richtige Codier&shy;lösung für Ihren Endkunden konfigurieren können, benötigen wir <b>3 bereits codierte Muster&shy;ausweise</b> zur Analyse. Bitte senden Sie diese an:<br><span style="display:inline-block;margin-top:6px;">${addr}</span>`;
+      el.techUnknownHint.style.display = "block";
+    } else {
+      el.techUnknownHint.style.display = "none";
+    }
+  }
 
   // A2
   el.a2Options.className = "row row-2" + (!state.a2Variant ? " danger-ring" : "");
@@ -215,6 +229,12 @@ function update() {
   const emailFilled = state.email && state.email.trim().length > 0;
   const emailValid  = emailFilled && isValidEmail(state.email);
   el.emailWarn.style.display = (emailFilled && !isValidEmail(state.email)) ? "block" : "none";
+
+  // Opt-Modul Beschreibung Pflichtfeld-Warnungen
+  if (el.optCustomDescWarn)      el.optCustomDescWarn.style.display      = (state.opt.custom      && !state.opt.customDesc.trim())      ? "block" : "none";
+  if (el.optSuppliesDescWarn)    el.optSuppliesDescWarn.style.display    = (state.opt.supplies    && !state.opt.suppliesDesc.trim())    ? "block" : "none";
+  if (el.optAccessoriesDescWarn) el.optAccessoriesDescWarn.style.display = (state.opt.accessories && !state.opt.accessoriesDesc.trim()) ? "block" : "none";
+  if (el.optTagDescWarn)         el.optTagDescWarn.style.display         = (state.opt.tag         && !state.opt.tagDesc.trim())         ? "block" : "none";
 
   // Sichtbare Karten neu nummerieren
   let stepN = 1;
