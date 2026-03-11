@@ -56,6 +56,8 @@ header.page { margin-top: calc(var(--banner-h) + 12px); }
 .banner { position: fixed; top:0; left:0; right:0; z-index: 50; border-bottom:1px solid var(--border); background:#fff; display:flex; align-items:center; justify-content:center; height: var(--banner-h); }
 .banner img { display:block; max-height: calc(var(--banner-h)); height: 100%; width: auto; object-fit: contain; object-position: center center; }
 .checkout { border-top:1px solid var(--border); padding-top:12px; margin-top:12px; }
+.pdf-download-btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; background:#fff; border:1.5px solid var(--brand-primary); border-radius:10px; color:var(--brand-primary); font-size:13px; font-weight:600; text-decoration:none; transition:background .15s, color .15s; }
+.pdf-download-btn:hover { background:var(--brand-primary); color:#fff; }
 .emph { color: var(--brand-primary); font-weight:600; }
 .card-head { cursor:pointer; user-select:none; }
 .card-head .chevron { margin-left:auto; font-size:16px; transition:transform .2s; color: var(--muted); }

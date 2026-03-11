@@ -29,6 +29,7 @@ app.post('/admin-login', handleAdminLogin);
 app.use('/css',    express.static(path.join(PUBLIC, 'css')));
 app.use('/js',     express.static(path.join(PUBLIC, 'js')));
 app.use('/images', express.static(path.join(PUBLIC, 'images')));
+app.use('/files',  express.static(path.join(PUBLIC, 'files')));
 app.get('/login.html',       (req, res) => res.sendFile(path.join(PUBLIC, 'login.html')));
 app.get('/admin-login.html', (req, res) => res.sendFile(path.join(PUBLIC, 'admin-login.html')));
 
