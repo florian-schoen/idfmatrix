@@ -312,6 +312,32 @@ function buildCartHtml() {
     if (mTotal > 0) html += totalRow('Gesamtpreis Maintenance', mTotal);
     html += '</tbody></table>';
   }
+
+  // Sonderwünsche & optionale Module
+  const optRows = [];
+  if (state.opt.custom)      optRows.push(['Anpassung an kundenspezifische Prozesse', state.opt.customDesc]);
+  if (state.opt.supplies)    optRows.push(['Spezialanforderung Drucker',               state.opt.suppliesDesc]);
+  if (state.opt.accessories) optRows.push(['Zubehör (Ausweishüllen, Jojos, etc.)',      state.opt.accessoriesDesc]);
+  if (state.opt.tag)         optRows.push(['evolutionID TagAnalyzer',                   state.opt.tagDesc]);
+  if (optRows.length > 0 || (state.notes && state.notes.trim())) {
+    html += `<h4 style="color:#1a3a6e;border-bottom:2px solid #1a3a6e;padding-bottom:4px;margin:20px 0 10px;">Sonderwünsche &amp; optionale Module</h4>`;
+    if (optRows.length > 0) {
+      html += `<table style="border-collapse:collapse;width:100%;font-size:13px;margin-bottom:12px;">`;
+      optRows.forEach(([label, desc]) => {
+        html += `<tr>
+          <td style="padding:8px 12px;background:#f4f7ff;border:1px solid #dde4f0;font-weight:600;width:35%;vertical-align:top;">${esc(label)}</td>
+          <td style="padding:8px 12px;border:1px solid #dde4f0;vertical-align:top;">${desc && desc.trim() ? esc(desc.trim()) : '<span style="color:#888;">Keine weitere Beschreibung angegeben.</span>'}</td>
+        </tr>`;
+      });
+      html += `</table>`;
+    }
+    if (state.notes && state.notes.trim()) {
+      html += `<div style="margin-top:8px;"><b>Allgemeine Notizen:</b>
+        <div style="margin-top:6px;padding:10px 12px;background:#f9fafb;border:1px solid #dde4f0;border-radius:6px;font-size:13px;white-space:pre-wrap;">${esc(state.notes.trim())}</div>
+      </div>`;
+    }
+  }
+
   return html;
 }
 
