@@ -338,7 +338,19 @@ function buildCartHtml() {
   // SUP_LETTERSHOP Preis dynamisch ableiten (nach Overrides)
   P.SUP_LETTERSHOP.price = Math.round(P.LETTERSHOP.price * 0.21 * 100) / 100;
 
-  // Initiales Rendering
+  // Alle Karten in #left einklappen + step-num Elemente erstellen (Nummer wird von update() gesetzt)
+  document.querySelectorAll('#left .card').forEach(card => {
+    card.classList.add('collapsed');
+    const dot = card.querySelector('.card-head .dot');
+    if (dot) {
+      const num = document.createElement('div');
+      num.className = 'step-num';
+      num.textContent = '–';
+      dot.parentNode.replaceChild(num, dot);
+    }
+  });
+
+  // Initiales Rendering (setzt auch korrekte Nummern für sichtbare Karten)
   radioCards(el.a1Options, "a1", A1, state.a1Variant, setA1);
   checkCards(el.techCards, "tech", TECH, state.tech, toggleTech);
   radioCards(el.a2Options, "a2", A2, state.a2Variant, setA2);
@@ -346,18 +358,6 @@ function buildCartHtml() {
   radioCards(el.a3Printers, "a3", A3, state.a3Printer, setA3);
   radioCards(el.a5Options, "a5", A5, state.a5Umsetzung, setA5);
   update();
-
-  // Alle Karten in #left einklappen + Nummern vergeben
-  document.querySelectorAll('#left .card').forEach((card, i) => {
-    card.classList.add('collapsed');
-    const dot = card.querySelector('.card-head .dot');
-    if (dot) {
-      const num = document.createElement('div');
-      num.className = 'step-num';
-      num.textContent = i + 1;
-      dot.parentNode.replaceChild(num, dot);
-    }
-  });
 
   document.getElementById("left").addEventListener("click", e => {
     const head = e.target.closest(".card-head");
