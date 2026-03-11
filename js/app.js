@@ -148,6 +148,10 @@ function setCam(v) {
   if (v === "webcam" || v === "dslr") {
     state.a2Stativ = true; state.a2Lighting = true;
     el.a2Stativ.checked = true; el.a2Lighting.checked = true;
+  } else if (v === "none") {
+    state.a2Stativ = false; state.a2Lighting = false;
+    state.qtyStativ = null; state.qtyLed = null;
+    el.a2Stativ.checked = false; el.a2Lighting.checked = false;
   }
   update();
 }
@@ -279,12 +283,13 @@ function buildCartHtml() {
         <th ${thr}>Menge</th><th ${thr}>Einzelpreis</th><th ${thr}>Gesamtpreis</th>
       </tr></thead><tbody>`;
   }
-  function tableRow(i, sku, name, qty, price) {
+  function tableRow(i, sku, name, qty, price, note) {
     const bg = i % 2 === 0 ? '#f4f7ff' : '#ffffff';
     const td = `style="padding:6px 10px;border-bottom:1px solid #e0e0e0;background:${bg};"`;
     const tdr = `style="padding:6px 10px;text-align:right;border-bottom:1px solid #e0e0e0;background:${bg};"`;
     const ep = price != null ? price : 0;
-    return `<tr><td ${td}>${i+1}</td><td ${td}>${esc(sku)}</td><td ${td}>${esc(name)}</td>
+    const nameHtml = esc(name) + (note ? `<br><span style="color:#888;font-size:11px;">${esc(note)}</span>` : '');
+    return `<tr><td ${td}>${i+1}</td><td ${td}>${esc(sku)}</td><td ${td}>${nameHtml}</td>
       <td ${tdr}>${qty}</td><td ${tdr}>${price != null ? fmtE(ep) : 'auf Anfrage'}</td>
       <td ${tdr}>${price != null ? fmtE(ep * qty) : ''}</td></tr>`;
   }
@@ -296,14 +301,14 @@ function buildCartHtml() {
   const items = buildCartItems().filter(it => it.sku);
   let total = 0;
   let html = `<h4 style="color:#1a3a6e;margin:0 0 6px;">Warenkorb</h4>` + tableHead();
-  items.forEach((it, i) => { total += (it.price||0) * it.qty; html += tableRow(i, it.sku, it.name, it.qty, it.price); });
+  items.forEach((it, i) => { total += (it.price||0) * it.qty; html += tableRow(i, it.sku, it.name, it.qty, it.price, it.note); });
   html += totalRow('Gesamtpreis', total) + '</tbody></table>';
 
   const maint = buildMaintItems();
   if (maint.length > 0) {
     let mTotal = 0;
     html += `<h4 style="color:#1a3a6e;margin:16px 0 6px;">Softwaremaintenance (${state.maintYears} Jahre)</h4>` + tableHead();
-    maint.forEach((it, i) => { mTotal += (it.price||0) * it.qty; html += tableRow(i, it.sku, it.name, it.qty, it.price); });
+    maint.forEach((it, i) => { mTotal += (it.price||0) * it.qty; html += tableRow(i, it.sku, it.name, it.qty, it.price, it.note); });
     if (mTotal > 0) html += totalRow('Gesamtpreis Maintenance', mTotal);
     html += '</tbody></table>';
   }

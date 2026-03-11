@@ -216,6 +216,15 @@ function update() {
   const emailValid  = emailFilled && isValidEmail(state.email);
   el.emailWarn.style.display = (emailFilled && !isValidEmail(state.email)) ? "block" : "none";
 
+  // Sichtbare Karten neu nummerieren
+  let stepN = 1;
+  document.querySelectorAll('#left .card').forEach(card => {
+    const num = card.querySelector('.step-num');
+    if (!num) return;
+    if (card.style.display === 'none') return;
+    num.textContent = stepN++;
+  });
+
   // Status + Buttons
   const valid = isValid();
   el.checkoutBtn.disabled = !valid;
