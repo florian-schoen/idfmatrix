@@ -15,7 +15,7 @@ export default async (request, context) => {
         status: 302,
         headers: {
           Location: "/",
-          "Set-Cookie": TOKEN + "; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400",
+          "Set-Cookie": TOKEN + "; Path=/; HttpOnly; SameSite=Strict",
         },
       });
     }
