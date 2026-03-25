@@ -1,12 +1,11 @@
 const SITE_PASSWORD  = process.env.SITE_PASSWORD  || 'changeme';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'adminchangeme';
 
-// Auth-Cookie setzen (30 Tage)
+// Auth-Cookie setzen (Session-Cookie, läuft beim Browser-Schließen ab)
 function setCookie(res, name, value) {
   res.cookie(name, value, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 30 * 24 * 60 * 60 * 1000,
     sameSite: 'lax',
   });
 }
@@ -23,7 +22,7 @@ function requireAdminAuth(req, res, next) {
   res.redirect('/admin-login.html');
 }
 
-// POST /login – Site-Passwort (Form-Submit)
+// POST /login → Site-Passwort (Form-Submit)
 function handleSiteLogin(req, res) {
   const { password } = req.body;
   if (password === SITE_PASSWORD) {
@@ -34,7 +33,7 @@ function handleSiteLogin(req, res) {
   }
 }
 
-// POST /admin-login – Admin-Passwort (Form-Submit)
+// POST /admin-login → Admin-Passwort (Form-Submit)
 function handleAdminLogin(req, res) {
   const { password } = req.body;
   if (password === ADMIN_PASSWORD) {
