@@ -1,43 +1,54 @@
+const crypto = require('crypto');
+
 const SITE_PASSWORD  = process.env.SITE_PASSWORD  || 'changeme';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'adminchangeme';
 
-// Auth-Cookie setzen (Session-Cookie, läuft beim Browser-Schließen ab)
-function setCookie(res, name, value) {
-  res.cookie(name, value, {
+// In-memory Sessions – werden bei Server-Neustart gelöscht
+const siteSessions  = new Set();
+const adminSessions = new Set();
+
+function setCookie(res, name, token) {
+  res.cookie(name, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
+    maxAge: 8 * 60 * 60 * 1000, // 8 Stunden
   });
 }
 
-// Middleware: Konfigurator-Zugang
 function requireSiteAuth(req, res, next) {
-  if (req.cookies && req.cookies.site_auth === SITE_PASSWORD) return next();
+  const token = req.cookies && req.cookies.site_auth;
+  if (token && siteSessions.has(token)) return next();
   res.redirect('/login.html');
 }
 
-// Middleware: Admin-Zugang
 function requireAdminAuth(req, res, next) {
-  if (req.cookies && req.cookies.admin_auth === ADMIN_PASSWORD) return next();
+  const token = req.cookies && req.cookies.admin_auth;
+  if (token && adminSessions.has(token)) return next();
   res.redirect('/admin-login.html');
 }
 
-// POST /login → Site-Passwort (Form-Submit)
 function handleSiteLogin(req, res) {
   const { password } = req.body;
   if (password === SITE_PASSWORD) {
-    setCookie(res, 'site_auth', SITE_PASSWORD);
+    const token = crypto.randomBytes(32).toString('hex');
+    siteSessions.add(token);
+    setCookie(res, 'site_auth', token);
     res.redirect('/');
   } else {
     res.redirect('/login.html?error=1');
   }
 }
 
-// POST /admin-login → Admin-Passwort (Form-Submit)
 function handleAdminLogin(req, res) {
   const { password } = req.body;
   if (password === ADMIN_PASSWORD) {
-    setCookie(res, 'admin_auth', ADMIN_PASSWORD);
+    const adminToken = crypto.randomBytes(32).toString('hex');
+    const siteToken  = crypto.randomBytes(32).toString('hex');
+    adminSessions.add(adminToken);
+    siteSessions.add(siteToken);
+    setCookie(res, 'admin_auth', adminToken);
+    setCookie(res, 'site_auth',  siteToken);
     res.redirect('/admin.html');
   } else {
     res.redirect('/admin-login.html?error=1');
