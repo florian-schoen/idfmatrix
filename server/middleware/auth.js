@@ -16,6 +16,16 @@ function setCookie(res, name, token) {
   });
 }
 
+// Kurzzeitiges nicht-httpOnly Cookie das dem Client signalisiert: frischer Login
+function setSessInitCookie(res) {
+  res.cookie('sess_init', '1', {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 30 * 1000, // 30 Sekunden reichen für den Redirect
+  });
+}
+
 function requireSiteAuth(req, res, next) {
   const token = req.cookies && req.cookies.site_auth;
   if (token && siteSessions.has(token)) return next();
@@ -34,6 +44,7 @@ function handleSiteLogin(req, res) {
     const token = crypto.randomBytes(32).toString('hex');
     siteSessions.add(token);
     setCookie(res, 'site_auth', token);
+    setSessInitCookie(res);
     res.redirect('/');
   } else {
     res.redirect('/login.html?error=1');
