@@ -21,7 +21,7 @@ export async function onRequest(context) {
         status: 302,
         headers: {
           Location: '/IDfMatrix-Produktkonfigurator.html',
-          'Set-Cookie': SITE_TOKEN + '; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400',
+          'Set-Cookie': SITE_TOKEN + '; Path=/; HttpOnly; SameSite=Strict',
         },
       });
     }
@@ -35,8 +35,8 @@ export async function onRequest(context) {
     if (ADMIN_PASS !== '' && entered === ADMIN_PASS) {
       const headers = new Headers({ Location: '/admin.html' });
       // Admin gets both cookies so they can also view the main site
-      headers.append('Set-Cookie', ADMIN_TOKEN + '; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400');
-      headers.append('Set-Cookie', SITE_TOKEN  + '; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400');
+      headers.append('Set-Cookie', ADMIN_TOKEN + '; Path=/; HttpOnly; SameSite=Strict');
+      headers.append('Set-Cookie', SITE_TOKEN  + '; Path=/; HttpOnly; SameSite=Strict');
       return new Response(null, { status: 302, headers });
     }
     return Response.redirect(new URL('/admin-login.html?error=1', request.url));
