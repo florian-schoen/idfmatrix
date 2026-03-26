@@ -45,9 +45,21 @@ app.use('/api/send-email', requireSiteAuth, emailRouter);
 app.get('/admin',      requireAdminAuth, (req, res) => res.sendFile(path.join(PUBLIC, 'admin.html')));
 app.get('/admin.html', requireAdminAuth, (req, res) => res.sendFile(path.join(PUBLIC, 'admin.html')));
 
+// Script das bei jedem Seitenaufruf prüft ob eine aktive Browser-Session existiert.
+// sessionStorage wird beim Schließen des Browsers geleert – ist es leer, muss neu eingeloggt werden.
+const SESSION_CHECK = `<script>(function(){if(!sessionStorage.getItem('_s')){var ok=document.cookie.split(';').some(function(c){return c.trim()==='sess_init=1';});if(ok){sessionStorage.setItem('_s','1');document.cookie='sess_init=;Max-Age=0;path=/';}else{window.location.replace('/login.html');}}}());</script>`;
+
+function serveProtected(file, res) {
+  fs.readFile(path.join(PUBLIC, file), 'utf8', function(err, html) {
+    if (err) return res.status(500).end();
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html.replace('</head>', SESSION_CHECK + '</head>'));
+  });
+}
+
 // ---------- Konfigurator (Site-Auth) ----------
-app.get('/', requireSiteAuth, (req, res) => res.sendFile(path.join(PUBLIC, 'index.html')));
-app.get('/index.html', requireSiteAuth, (req, res) => res.sendFile(path.join(PUBLIC, 'index.html')));
+app.get('/', requireSiteAuth, (req, res) => serveProtected('index.html', res));
+app.get('/index.html', requireSiteAuth, (req, res) => serveProtected('index.html', res));
 
 app.listen(PORT, () => {
   console.log(`IDfMatrix Server läuft auf Port ${PORT}`);
