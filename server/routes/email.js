@@ -85,21 +85,25 @@ router.post('/', async (req, res) => {
       const emailFooter = `
         <hr style="margin:32px 0 20px;border:none;border-top:1px solid #e0e0e0;">
         <div style="font-size:11px;color:#888;line-height:1.7;">
+          <p style="margin:0 0 4px;"><b>Disclaimer / Hinweise:</b></p>
           <p style="margin:0 0 10px;">
-            <b>Preishinweis:</b> Die in dieser E-Mail enthaltenen Preisinformationen sind unverbindliche Schätzwerte
-            auf Basis Ihrer übermittelten Konfigurationsdaten. Sie stellen kein verbindliches Angebot im Sinne des
-            § 145 BGB dar. Endpreise können abhängig von finaler Spezifikation, Stückzahl und individuellen
-            Projektanforderungen abweichen. Ein verbindliches Angebot erhalten Sie nach eingehender Prüfung
-            durch unseren Vertrieb.
+            Die im Konfigurator sowie in dieser E-Mail enthaltenen Preise und Preisinformationen sind ausschließlich
+            für die Bosch Sicherheitssysteme GmbH bestimmt und basieren auf dem bestehenden Partnervertrag.
+            Eine Weitergabe von Partnerpreisen, Zugangsdaten oder sonstigen Preisinformationen an Dritte außerhalb
+            der Bosch-Organisation ist nicht gestattet.
+          </p>
+          <p style="margin:0 0 10px;">
+            Alle angegebenen Preise stellen unverbindliche Schätzwerte auf Basis der übermittelten
+            Konfigurationsdaten dar und sind kein verbindliches Angebot im Sinne des § 145 BGB. Endpreise können
+            je nach finaler Spezifikation, Stückzahl und individuellen Projektanforderungen abweichen.
+            Ein verbindliches Angebot erfolgt erst nach Prüfung durch den Vertrieb.
           </p>
           <p style="margin:0;">
-            <b>Datenschutz:</b> Mit dem Absenden Ihrer Anfrage über den IDfunction MATRIX Konfigurator haben Sie
-            der Verarbeitung Ihrer personenbezogenen Daten (Name, E-Mail-Adresse, Telefonnummer sowie
-            konfigurationsbezogene Angaben) zur Bearbeitung Ihrer Anfrage zugestimmt. Rechtsgrundlage ist
-            Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;b DSGVO (Durchführung vorvertraglicher Maßnahmen). Ihre Daten werden
-            ausschließlich zur Bearbeitung dieser Anfrage und Erstellung eines Angebots genutzt, nicht an Dritte
-            weitergegeben und nach Abschluss des Vorgangs gemäß gesetzlicher Aufbewahrungsfristen gelöscht.
-            Weitere Informationen entnehmen Sie unserer
+            Mit dem Absenden der Anfrage über den Konfigurator stimmen Sie der Verarbeitung Ihrer
+            personenbezogenen Daten (z.&nbsp;B. Name, Kontaktdaten und konfigurationsbezogene Angaben) zur
+            Bearbeitung Ihrer Anfrage zu. Die Verarbeitung erfolgt auf Grundlage von Art.&nbsp;6 Abs.&nbsp;1
+            lit.&nbsp;b DSGVO, ausschließlich zu diesem Zweck, ohne Weitergabe an Dritte, und unter Einhaltung
+            der gesetzlichen Aufbewahrungsfristen. Weitere Informationen finden Sie in der
             <a href="https://www.evolutionid.com/datenschutz" style="color:#1a3a6e;">Datenschutzerklärung</a>.
           </p>
         </div>`;
